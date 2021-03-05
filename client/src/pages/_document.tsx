@@ -3,12 +3,11 @@ import { ColorModeScript } from "@chakra-ui/react";
 import theme from "../theme";
 
 export default class Document extends NextDocument {
-    document.body.style.backgroundColor = "red"
   render() {
     return (
       <Html>
         <Head />
-        <body >
+        <body>
           {/* Make Color mode to persists when you refresh the page. */}
           <ColorModeScript />
           <Main />

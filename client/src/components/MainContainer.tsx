@@ -1,4 +1,4 @@
-import { Flex, useColorMode } from "@chakra-ui/react";
+import { Box, useColorMode } from "@chakra-ui/react";
 
 const MainContainer: React.FC<any> = (props: any) => {
   const { colorMode } = useColorMode();
@@ -8,7 +8,7 @@ const MainContainer: React.FC<any> = (props: any) => {
   const color = { light: "black", dark: "white" };
   return (
     <>
-      <Flex bg={bgColor[colorMode]} color={color[colorMode]} {...props} />
+      <Box bg={bgColor[colorMode]} color={color[colorMode]} {...props} />
     </>
   );
 };
