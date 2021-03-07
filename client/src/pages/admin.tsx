@@ -22,8 +22,8 @@ export interface AdminProps {}
 const Admin: React.FC<AdminProps> = () => {
   return (
     <>
-      <MainContainer minHeight="100vh">
-        <Layout withNav={true}>
+      <MainContainer>
+        <Layout withNav={false}>
           <MidBox>
             <MotionBox
               variants={fadeInMotion}

@@ -23,7 +23,7 @@ const Index: React.FC<IndexProps> = () => {
   console.log(colorMode);
   return (
     <>
-      <MainContainer minHeight="100vh">
+      <MainContainer>
         <Layout withNav={false}>
           <MotionBox
             variants={fadeInMotion}
@@ -48,6 +48,14 @@ const Index: React.FC<IndexProps> = () => {
                     <Button shadow="sm">Student</Button>
                   </NextLink>
                 </Stack>
+                <Box mt="1rem">
+                  <Text fontSize="1.1rem">
+                    <span style={{ fontWeight: 700 }}>create,</span>
+                    <span style={{ fontWeight: 700 }}> send,</span> and
+                    <span style={{ fontWeight: 700 }}> answer</span> some
+                    quizzes
+                  </Text>
+                </Box>
               </Wrapper>
             </Flex>
           </MotionBox>

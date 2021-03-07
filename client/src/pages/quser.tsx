@@ -22,8 +22,8 @@ export interface QUserProps {}
 const QUser: React.FC<QUserProps> = () => {
   return (
     <>
-      <MainContainer minHeight="100vh">
-        <Layout withNav={true}>
+      <MainContainer>
+        <Layout withNav={false}>
           <MidBox>
             <MotionBox
               variants={fadeInMotion}

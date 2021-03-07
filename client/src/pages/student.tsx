@@ -23,7 +23,7 @@ const Student: React.FC<StudentProps> = () => {
   return (
     <>
       <MainContainer minHeight="100vh">
-        <Layout withNav={true}>
+        <Layout withNav={false}>
           <MidBox>
             <MotionBox
               variants={fadeInMotion}
