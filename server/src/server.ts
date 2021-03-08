@@ -10,6 +10,14 @@ import connectRedis from "connect-redis";
 
 import cors from "cors";
 import { MyContext } from "./types";
+import { Quiz } from "./Entities/Quiz";
+import { QuizResolver } from "./Resolvers/quiz";
+import { MultippleChoiceResolver } from "./Resolvers/multipleChoice";
+import { MultipleChoices } from "./Entities/MultipleChoices";
+import { QuizSet } from "./Entities/QuizSet";
+import { AnswerResolver } from "./Resolvers/answer";
+import { Answer } from "./Entities/Answer";
+import { AnswerSet } from "./Entities/AnswerSet";
 
 //declare this for the session
 declare module "express-session" {
@@ -27,9 +35,11 @@ const main = async () => {
     password: "xxkaa548",
     logging: true,
     synchronize: true,
-    entities: [],
+    entities: [Quiz, MultipleChoices, QuizSet, Answer, AnswerSet],
   });
-
+  // await QuizSet.delete({});
+  // await MultipleChoices.delete({});
+  // await Quiz.delete({});
   // app
   const app = express();
 
@@ -65,7 +75,7 @@ const main = async () => {
   //for GRAPHQL
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [""],
+      resolvers: [QuizResolver, MultippleChoiceResolver, AnswerResolver],
       validate: false,
     }),
     //to access an object
@@ -79,7 +89,6 @@ const main = async () => {
     console.log("server is connected in 5000");
   });
 };
-
 
 main().catch((e) => {
   console.log(e);

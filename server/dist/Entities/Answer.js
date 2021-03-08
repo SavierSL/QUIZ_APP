@@ -9,66 +9,70 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Quiz = void 0;
+exports.Answer = void 0;
 const typeorm_1 = require("typeorm");
 const type_graphql_1 = require("type-graphql");
-const MultipleChoices_1 = require("./MultipleChoices");
-const QuizSet_1 = require("./QuizSet");
-let Quiz = class Quiz extends typeorm_1.BaseEntity {
+const AnswerSet_1 = require("./AnswerSet");
+let Answer = class Answer extends typeorm_1.BaseEntity {
 };
 __decorate([
     type_graphql_1.Field(() => type_graphql_1.Int),
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], Quiz.prototype, "id", void 0);
+], Answer.prototype, "id", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], Quiz.prototype, "creatorId", void 0);
+], Answer.prototype, "studentId", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], Quiz.prototype, "itemNumber", void 0);
+], Answer.prototype, "itemNumber", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], Quiz.prototype, "quizSetId", void 0);
+], Answer.prototype, "quizSetId", void 0);
 __decorate([
-    type_graphql_1.Field(() => QuizSet_1.QuizSet, { nullable: true }),
-    typeorm_1.ManyToOne(() => QuizSet_1.QuizSet, (quizSet) => quizSet.quizzes),
-    __metadata("design:type", QuizSet_1.QuizSet)
-], Quiz.prototype, "quizSet", void 0);
+    type_graphql_1.Field(() => type_graphql_1.Int),
+    typeorm_1.Column(),
+    __metadata("design:type", Number)
+], Answer.prototype, "quizId", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Quiz.prototype, "question", void 0);
-__decorate([
-    type_graphql_1.Field(() => [MultipleChoices_1.MultipleChoices], { nullable: true }),
-    typeorm_1.OneToMany(() => MultipleChoices_1.MultipleChoices, (multipleChoices) => multipleChoices.quiz),
-    __metadata("design:type", Array)
-], Quiz.prototype, "multipleChoices", void 0);
+], Answer.prototype, "question", void 0);
 __decorate([
     type_graphql_1.Field(),
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Quiz.prototype, "answer", void 0);
+], Answer.prototype, "answer", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    typeorm_1.Column(),
+    __metadata("design:type", Boolean)
+], Answer.prototype, "isCorrect", void 0);
+__decorate([
+    type_graphql_1.Field(() => AnswerSet_1.AnswerSet, { nullable: true }),
+    typeorm_1.ManyToOne(() => AnswerSet_1.AnswerSet, (answerSet) => answerSet.answers),
+    __metadata("design:type", AnswerSet_1.AnswerSet)
+], Answer.prototype, "answerSet", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.CreateDateColumn(),
     __metadata("design:type", Date)
-], Quiz.prototype, "createdAt", void 0);
+], Answer.prototype, "createdAt", void 0);
 __decorate([
     type_graphql_1.Field(() => String),
     typeorm_1.UpdateDateColumn(),
     __metadata("design:type", Date)
-], Quiz.prototype, "updatedAt", void 0);
-Quiz = __decorate([
+], Answer.prototype, "updatedAt", void 0);
+Answer = __decorate([
     type_graphql_1.ObjectType(),
     typeorm_1.Entity()
-], Quiz);
-exports.Quiz = Quiz;
-//# sourceMappingURL=Quiz.js.map
+], Answer);
+exports.Answer = Answer;
+//# sourceMappingURL=Answer.js.map

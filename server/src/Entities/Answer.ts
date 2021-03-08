@@ -12,17 +12,18 @@ import {
 import { Field, Float, Int, ObjectType } from "type-graphql";
 import { MultipleChoices } from "./MultipleChoices";
 import { QuizSet } from "./QuizSet";
+import { AnswerSet } from "./AnswerSet";
 
 @ObjectType()
 @Entity()
-export class Quiz extends BaseEntity {
+export class Answer extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
   @Column()
-  creatorId!: number;
+  studentId!: number;
 
   @Field()
   @Column()
@@ -32,22 +33,25 @@ export class Quiz extends BaseEntity {
   @Column()
   quizSetId!: number;
 
-  //OWNER FIELD
-  @Field(() => QuizSet, { nullable: true })
-  @ManyToOne(() => QuizSet, (quizSet) => quizSet.quizzes)
-  quizSet!: QuizSet;
+  @Field(() => Int)
+  @Column()
+  quizId!: number;
 
   @Field()
   @Column()
   question!: string;
 
-  @Field(() => [MultipleChoices], { nullable: true })
-  @OneToMany(() => MultipleChoices, (multipleChoices) => multipleChoices.quiz)
-  multipleChoices: MultipleChoices[];
-
   @Field()
   @Column()
   answer!: string;
+
+  @Field()
+  @Column()
+  isCorrect!: boolean;
+
+  @Field(() => AnswerSet, { nullable: true })
+  @ManyToOne(() => AnswerSet, (answerSet) => answerSet.answers)
+  answerSet!: AnswerSet;
 
   @Field(() => String)
   @CreateDateColumn()
