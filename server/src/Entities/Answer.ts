@@ -33,6 +33,10 @@ export class Answer extends BaseEntity {
   @Column()
   quizSetId!: number;
 
+  @Field()
+  @Column()
+  answerSetId!: number;
+
   @Field(() => Int)
   @Column()
   quizId!: number;

@@ -7,10 +7,8 @@ import { createConnection } from "typeorm";
 import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
-
 import cors from "cors";
 import { MyContext } from "./types";
-import { Quiz } from "./Entities/Quiz";
 import { QuizResolver } from "./Resolvers/quiz";
 import { MultippleChoiceResolver } from "./Resolvers/multipleChoice";
 import { MultipleChoices } from "./Entities/MultipleChoices";
@@ -18,11 +16,12 @@ import { QuizSet } from "./Entities/QuizSet";
 import { AnswerResolver } from "./Resolvers/answer";
 import { Answer } from "./Entities/Answer";
 import { AnswerSet } from "./Entities/AnswerSet";
+import { Quiz } from "./Entities/Quiz";
 
 //declare this for the session
 declare module "express-session" {
   interface Session {
-    userId: number;
+    userId: number; //
   }
 }
 
@@ -40,6 +39,8 @@ const main = async () => {
   // await QuizSet.delete({});
   // await MultipleChoices.delete({});
   // await Quiz.delete({});
+  // await Answer.delete({}); //
+  // await AnswerSet.delete({});
   // app
   const app = express();
 

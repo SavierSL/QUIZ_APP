@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -12,6 +13,7 @@ import {
 import { Field, Float, Int, ObjectType } from "type-graphql";
 
 import { Answer } from "./Answer";
+import { QuizSet } from "./QuizSet";
 
 @ObjectType()
 @Entity()
@@ -36,6 +38,10 @@ export class AnswerSet extends BaseEntity {
   @OneToMany(() => Answer, (answer) => answer.answerSet)
   answers: Answer[];
 
+  @Field(() => QuizSet, { nullable: true })
+  @OneToOne(() => QuizSet, (quizSet) => quizSet.answerSet)
+  quizSet: QuizSet;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
@@ -44,3 +50,4 @@ export class AnswerSet extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+//
