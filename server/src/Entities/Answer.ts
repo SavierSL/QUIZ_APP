@@ -31,10 +31,6 @@ export class Answer extends BaseEntity {
 
   @Field()
   @Column()
-  quizSetId!: number;
-
-  @Field()
-  @Column()
   answerSetId!: number;
 
   @Field(() => Int)
@@ -46,7 +42,7 @@ export class Answer extends BaseEntity {
   question!: string;
 
   @Field()
-  @Column()
+  @Column() //
   answer!: string;
 
   @Field()

@@ -1,7 +1,8 @@
 import { Quiz } from "../Entities/Quiz";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { QuizSet } from "../Entities/QuizSet";
 import { getConnection } from "typeorm";
+import { MyContext } from "../types";
 
 @Resolver()
 export class QuizResolver {
@@ -14,7 +15,8 @@ export class QuizResolver {
     return quiz;
   }
   @Query(() => QuizSet, { nullable: true })
-  async getQuizSet(@Arg("id") id: number) {
+  async getQuizSet(@Arg("id") id: number, @Ctx() { req }: MyContext) {
+    console.log(`quiz set${req.session.userId}`);
     const quiz = await QuizSet.findOne(
       { id: id },
       { relations: ["quizzes", "quizzes.multipleChoices"] }

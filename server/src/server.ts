@@ -17,6 +17,9 @@ import { AnswerResolver } from "./Resolvers/answer";
 import { Answer } from "./Entities/Answer";
 import { AnswerSet } from "./Entities/AnswerSet";
 import { Quiz } from "./Entities/Quiz";
+import { Student } from "./Entities/Student";
+import { UserResolver } from "./Resolvers/user";
+import __prod__ from "./constants";
 
 //declare this for the session
 declare module "express-session" {
@@ -34,11 +37,11 @@ const main = async () => {
     password: "xxkaa548",
     logging: true,
     synchronize: true,
-    entities: [Quiz, MultipleChoices, QuizSet, Answer, AnswerSet],
+    entities: [Quiz, MultipleChoices, QuizSet, Answer, AnswerSet, Student],
   });
   // await QuizSet.delete({});
   // await MultipleChoices.delete({});
-  // await Quiz.delete({});
+  // // await Quiz.delete({});
   // await Answer.delete({}); //
   // await AnswerSet.delete({});
   // app
@@ -56,7 +59,7 @@ const main = async () => {
 
   app.use(
     session({
-      name: "cid", //cookie name
+      name: "cookieID", //cookie name
       store: new RedisStore({
         client: redis,
         disableTouch: true, //true to keep the user for too long
@@ -64,7 +67,7 @@ const main = async () => {
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, //10 years,
         httpOnly: true, //in your js code and frontend you cannot access the cookie
-        secure: false, //cookie only works in https
+        secure: !__prod__, //cookie only works in https
         sameSite: "lax", //csrf
       },
       saveUninitialized: true, //it will create a session by default turn it to false so we can add
@@ -76,7 +79,12 @@ const main = async () => {
   //for GRAPHQL
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [QuizResolver, MultippleChoiceResolver, AnswerResolver],
+      resolvers: [
+        UserResolver,
+        QuizResolver,
+        MultippleChoiceResolver,
+        AnswerResolver,
+      ],
       validate: false,
     }),
     //to access an object
@@ -89,7 +97,7 @@ const main = async () => {
   app.listen(5000, () => {
     console.log("server is connected in 5000");
   });
-};
+}; //
 
 main().catch((e) => {
   console.log(e);
