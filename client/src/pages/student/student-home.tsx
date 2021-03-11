@@ -3,6 +3,8 @@ import MainContainer from "../../components/MainContainer";
 import Layout from "../../components/layout";
 import Wrapper from "../../components/wrapper";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import InputField from "../../components/inputFIeld";
+import NextLink from "next/link";
 
 export interface AdminHomeProps {}
 
@@ -25,6 +27,9 @@ const AdminHome: React.FC<AdminHomeProps> = () => {
         <Layout withNav={true}>
           <Box ml="5rem" pt="5rem">
             <Wrapper variant="large">
+              <Button>
+                <NextLink href="/quiz">ADD QUIZ</NextLink>
+              </Button>
               <Flex>
                 {tableTitles.map((title) => {
                   return (
