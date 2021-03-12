@@ -1,13 +1,26 @@
 import { Quiz } from "../Entities/Quiz";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { QuizSet } from "../Entities/QuizSet";
-import { getConnection } from "typeorm";
+import { getConnection, LessThan } from "typeorm";
 import { MyContext } from "../types";
+import crypto from "crypto";
+const set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+function generate(length: number) {
+  const bytes = crypto.randomBytes(length);
+  const chars = [];
+
+  for (let i = 0; i < bytes.length; i++) {
+    chars.push(set[bytes[i] % set.length]);
+  }
+
+  return chars.join(""); //
+}
 
 @Resolver()
 export class QuizResolver {
   @Query(() => Quiz, { nullable: true })
-  async getQuiz(@Arg("id") id: number) {
+  async getQuiz(@Arg("id", () => Int) id: number) {
     const quiz = await Quiz.findOne(
       { id: id },
       { relations: ["multipleChoices", "quizSet"] }
@@ -15,10 +28,13 @@ export class QuizResolver {
     return quiz;
   }
   @Query(() => QuizSet, { nullable: true })
-  async getQuizSet(@Arg("id") id: number, @Ctx() { req }: MyContext) {
+  async getQuizSet(
+    @Arg("quizSetCode") quizSetCode: string,
+    @Ctx() { req }: MyContext
+  ) {
     console.log(`quiz set${req.session.userId}`);
     const quiz = await QuizSet.findOne(
-      { id: id },
+      { quizSetCode: quizSetCode },
       { relations: ["quizzes", "quizzes.multipleChoices"] }
     );
     // const quiz = await getConnection().query(
@@ -47,7 +63,12 @@ export class QuizResolver {
     @Arg("title") title: string,
     @Arg("creatorId") creatorId: number
   ) {
-    const quizSet = await QuizSet.create({ title, creatorId }).save();
+    const quizSetCode = generate(6);
+    const quizSet = await QuizSet.create({
+      title,
+      creatorId,
+      quizSetCode,
+    }).save();
     return quizSet;
   }
 
@@ -59,12 +80,14 @@ export class QuizResolver {
     @Arg("quizSetId") quizSetId: number,
     @Arg("creatorId") creatorId: number
   ) {
+    const quizCode = generate(6);
     const makeQuiz = await Quiz.create({
       question,
       answer,
       quizSetId,
       itemNumber,
       creatorId,
+      quizCode,
     }).save();
     return makeQuiz;
   }

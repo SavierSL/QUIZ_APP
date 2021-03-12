@@ -94,8 +94,8 @@ const main = async () => {
   //to create a graphql endpoint for us on express
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(5000, () => {
-    console.log("server is connected in 5000");
+  app.listen(5001, () => {
+    console.log("server is connected in 5001");
   });
 }; //
 

@@ -1,5 +1,5 @@
 overwrite: true
-schema: "http://localhost:5000/graphql"
+schema: "http://localhost:5001/graphql"
 documents: "src/graphql/**/*.graphql"
 generates:
   src/generated/graphql.tsx:
@@ -7,4 +7,4 @@ generates:
       - "typescript"
       - "typescript-operations"
       - "typescript-react-apollo"
-#2:48 hr
+#WE HAD A PROBLEM GENERATING GRAPHQL SCHEMA BUT WE FIXED IT BY npm install graphql

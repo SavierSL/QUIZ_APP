@@ -23,6 +23,10 @@ export class QuizSet extends BaseEntity {
 
   @Field()
   @Column()
+  quizSetCode!: string;
+
+  @Field()
+  @Column()
   creatorId!: number;
 
   @Field()

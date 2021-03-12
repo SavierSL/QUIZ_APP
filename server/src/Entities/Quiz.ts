@@ -22,6 +22,10 @@ export class Quiz extends BaseEntity {
 
   @Field()
   @Column()
+  quizCode!: string;
+
+  @Field()
+  @Column()
   creatorId!: number;
 
   @Field()
