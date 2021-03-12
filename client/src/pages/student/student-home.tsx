@@ -5,15 +5,18 @@ import Wrapper from "../../components/wrapper";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import InputField from "../../components/inputFIeld";
 import NextLink from "next/link";
-import { useGetQuizQuery } from "../../generated/graphql";
+import Quiz from "../../components/pageComponents/quiz";
 import { withApollo } from "../../utils/withApollo";
+import { useGetStudentQuery } from "../../generated/graphql";
+import StudentQuizBox from "../../components/pageComponents/studentQuizBox";
 
 export interface AdminHomeProps {}
 
 const StudentHome: React.FC<AdminHomeProps> = () => {
-  const { data } = useGetQuizQuery({ variables: { id: 1 } });
-  console.log(data);
+  const { data: studentData } = useGetStudentQuery();
+  console.log(studentData);
   const tableTitles = ["Quiz Name", "Quiz Items", "Quiz Subject", "Quiz Score"];
+
   const isBorder = (title: string) => {
     if (title === "Quiz Name") {
       return "5px 0px 0px 5px";
@@ -31,16 +34,14 @@ const StudentHome: React.FC<AdminHomeProps> = () => {
         <Layout withNav={true}>
           <Box ml="5rem" pt="5rem">
             <Wrapper variant="large">
-              <Button>
-                <NextLink href="/quiz">ADD QUIZ</NextLink>
-              </Button>
+              <Quiz />
               <Flex>
                 {tableTitles.map((title) => {
                   return (
                     <Box
                       mr=".1rem"
                       p="1rem"
-                      border="1px solid #fff"
+                      border="1px solid #1687a7"
                       bg="none"
                       width="30%"
                       textAlign="center"
@@ -52,6 +53,11 @@ const StudentHome: React.FC<AdminHomeProps> = () => {
                   );
                 })}
               </Flex>
+              {studentData?.getStudent ? (
+                <StudentQuizBox quiz={studentData?.getStudent?.answerSets} />
+              ) : (
+                ""
+              )}
             </Wrapper>
           </Box>
         </Layout>

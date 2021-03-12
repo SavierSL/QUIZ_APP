@@ -1,18 +1,15 @@
-query getQuiz($id: Int!) {
-  getQuiz(id: $id) {
+mutation getQuizSet($quizSetCode: String!) {
+  getQuizSet(quizSetCode: $quizSetCode) {
     id
-    itemNumber
-    quizSetId
-    question
-    answer
-    quizSet {
+    quizSetCode
+    creatorId
+    title
+    quizzes {
       id
-    }
-    multipleChoices {
-      id
-      quizId
-      letterItem
-      letterContent
+      quizCode
+      itemNumber
+      question
+      creatorId
     }
   }
 }

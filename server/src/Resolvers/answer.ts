@@ -1,6 +1,6 @@
 import { Answer } from "../Entities/Answer";
 import { Quiz } from "../Entities/Quiz";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { BaseEntity } from "typeorm";
 import { AnswerSet } from "../Entities/AnswerSet";
 import { QuizSet } from "../Entities/QuizSet";
@@ -45,7 +45,7 @@ export class AnswerResolver extends BaseEntity {
 
   @Mutation(() => AnswerSet, { nullable: true })
   async createAnswerSet(
-    @Arg("quizSetId") quizSetId: number,
+    @Arg("quizSetId", () => Int) quizSetId: number,
     @Ctx() { req }: MyContext
   ) {
     console.log(`session ID ${req.session.userId}`);
@@ -59,10 +59,10 @@ export class AnswerResolver extends BaseEntity {
   }
 
   @Query(() => AnswerSet, { nullable: true })
-  async getAnswerSet(@Arg("quizSetId") quizSetId: number) {
+  async getAnswerSet(@Arg("studentId", () => Int) studentId: number) {
     const getAnswerSet = await AnswerSet.findOne(
       {
-        quizSetId,
+        studentId,
       },
       { relations: ["answers"] }
     );

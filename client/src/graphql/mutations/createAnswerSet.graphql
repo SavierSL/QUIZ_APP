@@ -1,0 +1,22 @@
+mutation createAnswerSet($quizSetId: Int!) {
+  createAnswerSet(quizSetId: $quizSetId) {
+    studentId
+    title
+    answers {
+      itemNumber
+      isCorrect
+      question
+      answer
+    }
+    quizSet {
+      title
+      quizzes {
+        itemNumber
+        question
+        answer
+      }
+      creatorId
+    }
+    createdAt
+  }
+}

@@ -1,0 +1,19 @@
+query getStudent {
+  getStudent {
+    student {
+      id
+      email
+    }
+    answerSets {
+      id
+      studentId
+      title
+      answers {
+        answer
+        isCorrect
+        answerSetId
+        itemNumber
+      }
+    }
+  }
+}

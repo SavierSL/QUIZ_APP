@@ -17,8 +17,8 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   getQuiz?: Maybe<Quiz>;
-  getQuizSet?: Maybe<QuizSet>;
   getAnswerSet?: Maybe<AnswerSet>;
+  getStudent?: Maybe<StudentData>;
 };
 
 
@@ -27,18 +27,14 @@ export type QueryGetQuizArgs = {
 };
 
 
-export type QueryGetQuizSetArgs = {
-  id: Scalars['Float'];
-};
-
-
 export type QueryGetAnswerSetArgs = {
-  quizSetId: Scalars['Float'];
+  studentId: Scalars['Int'];
 };
 
 export type Quiz = {
   __typename?: 'Quiz';
   id: Scalars['Int'];
+  quizCode: Scalars['String'];
   creatorId: Scalars['Float'];
   itemNumber: Scalars['Float'];
   quizSetId: Scalars['Float'];
@@ -53,6 +49,7 @@ export type Quiz = {
 export type QuizSet = {
   __typename?: 'QuizSet';
   id: Scalars['Int'];
+  quizSetCode: Scalars['String'];
   creatorId: Scalars['Float'];
   title: Scalars['String'];
   quizzes?: Maybe<Array<Quiz>>;
@@ -99,14 +96,37 @@ export type MultipleChoices = {
   updatedAt: Scalars['String'];
 };
 
+export type StudentData = {
+  __typename?: 'StudentData';
+  student: Student;
+  answerSets: Array<AnswerSet>;
+};
+
+export type Student = {
+  __typename?: 'Student';
+  id: Scalars['Int'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  answerSets?: Maybe<Array<AnswerSet>>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  getQuizSet?: Maybe<QuizSet>;
   createQuizSet: QuizSet;
   makeQuiz: Quiz;
   createMultipleChoice: MultipleChoices;
   answer: Answer;
   createAnswerSet?: Maybe<AnswerSet>;
   registerStudent: ResponseField;
+  logInStudent: ResponseField;
+};
+
+
+export type MutationGetQuizSetArgs = {
+  quizSetCode: Scalars['String'];
 };
 
 
@@ -141,11 +161,17 @@ export type MutationAnswerArgs = {
 
 
 export type MutationCreateAnswerSetArgs = {
-  quizSetId: Scalars['Float'];
+  quizSetId: Scalars['Int'];
 };
 
 
 export type MutationRegisterStudentArgs = {
+  password: Scalars['String'];
+  email: Scalars['String'];
+};
+
+
+export type MutationLogInStudentArgs = {
   password: Scalars['String'];
   email: Scalars['String'];
 };
@@ -162,82 +188,283 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
-export type Student = {
-  __typename?: 'Student';
-  id: Scalars['Int'];
-  email: Scalars['String'];
-  password: Scalars['String'];
-  answerSets?: Maybe<Array<AnswerSet>>;
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
-};
-
-export type GetQuizQueryVariables = Exact<{
-  id: Scalars['Int'];
+export type CreateAnswerSetMutationVariables = Exact<{
+  quizSetId: Scalars['Int'];
 }>;
 
 
-export type GetQuizQuery = (
-  { __typename?: 'Query' }
-  & { getQuiz?: Maybe<(
-    { __typename?: 'Quiz' }
-    & Pick<Quiz, 'id' | 'itemNumber' | 'quizSetId' | 'question' | 'answer'>
-    & { quizSet?: Maybe<(
+export type CreateAnswerSetMutation = (
+  { __typename?: 'Mutation' }
+  & { createAnswerSet?: Maybe<(
+    { __typename?: 'AnswerSet' }
+    & Pick<AnswerSet, 'studentId' | 'title' | 'createdAt'>
+    & { answers?: Maybe<Array<(
+      { __typename?: 'Answer' }
+      & Pick<Answer, 'itemNumber' | 'isCorrect' | 'question' | 'answer'>
+    )>>, quizSet?: Maybe<(
       { __typename?: 'QuizSet' }
-      & Pick<QuizSet, 'id'>
-    )>, multipleChoices?: Maybe<Array<(
-      { __typename?: 'MultipleChoices' }
-      & Pick<MultipleChoices, 'id' | 'quizId' | 'letterItem' | 'letterContent'>
+      & Pick<QuizSet, 'title' | 'creatorId'>
+      & { quizzes?: Maybe<Array<(
+        { __typename?: 'Quiz' }
+        & Pick<Quiz, 'itemNumber' | 'question' | 'answer'>
+      )>> }
+    )> }
+  )> }
+);
+
+export type GetAnswerSetQueryVariables = Exact<{
+  studentId: Scalars['Int'];
+}>;
+
+
+export type GetAnswerSetQuery = (
+  { __typename?: 'Query' }
+  & { getAnswerSet?: Maybe<(
+    { __typename?: 'AnswerSet' }
+    & Pick<AnswerSet, 'studentId' | 'title' | 'createdAt'>
+    & { answers?: Maybe<Array<(
+      { __typename?: 'Answer' }
+      & Pick<Answer, 'itemNumber' | 'isCorrect' | 'question' | 'answer'>
+    )>>, quizSet?: Maybe<(
+      { __typename?: 'QuizSet' }
+      & Pick<QuizSet, 'title' | 'creatorId'>
+      & { quizzes?: Maybe<Array<(
+        { __typename?: 'Quiz' }
+        & Pick<Quiz, 'itemNumber' | 'question' | 'answer'>
+      )>> }
+    )> }
+  )> }
+);
+
+export type GetQuizSetMutationVariables = Exact<{
+  quizSetCode: Scalars['String'];
+}>;
+
+
+export type GetQuizSetMutation = (
+  { __typename?: 'Mutation' }
+  & { getQuizSet?: Maybe<(
+    { __typename?: 'QuizSet' }
+    & Pick<QuizSet, 'id' | 'quizSetCode' | 'creatorId' | 'title'>
+    & { quizzes?: Maybe<Array<(
+      { __typename?: 'Quiz' }
+      & Pick<Quiz, 'id' | 'quizCode' | 'itemNumber' | 'question' | 'creatorId'>
     )>> }
   )> }
 );
 
+export type GetStudentQueryVariables = Exact<{ [key: string]: never; }>;
 
-export const GetQuizDocument = gql`
-    query getQuiz($id: Int!) {
-  getQuiz(id: $id) {
-    id
-    itemNumber
-    quizSetId
-    question
-    answer
-    quizSet {
-      id
+
+export type GetStudentQuery = (
+  { __typename?: 'Query' }
+  & { getStudent?: Maybe<(
+    { __typename?: 'StudentData' }
+    & { student: (
+      { __typename?: 'Student' }
+      & Pick<Student, 'id' | 'email'>
+    ), answerSets: Array<(
+      { __typename?: 'AnswerSet' }
+      & Pick<AnswerSet, 'id' | 'studentId' | 'title'>
+      & { answers?: Maybe<Array<(
+        { __typename?: 'Answer' }
+        & Pick<Answer, 'answer' | 'isCorrect' | 'answerSetId' | 'itemNumber'>
+      )>> }
+    )> }
+  )> }
+);
+
+
+export const CreateAnswerSetDocument = gql`
+    mutation createAnswerSet($quizSetId: Int!) {
+  createAnswerSet(quizSetId: $quizSetId) {
+    studentId
+    title
+    answers {
+      itemNumber
+      isCorrect
+      question
+      answer
     }
-    multipleChoices {
+    quizSet {
+      title
+      quizzes {
+        itemNumber
+        question
+        answer
+      }
+      creatorId
+    }
+    createdAt
+  }
+}
+    `;
+export type CreateAnswerSetMutationFn = Apollo.MutationFunction<CreateAnswerSetMutation, CreateAnswerSetMutationVariables>;
+
+/**
+ * __useCreateAnswerSetMutation__
+ *
+ * To run a mutation, you first call `useCreateAnswerSetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAnswerSetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAnswerSetMutation, { data, loading, error }] = useCreateAnswerSetMutation({
+ *   variables: {
+ *      quizSetId: // value for 'quizSetId'
+ *   },
+ * });
+ */
+export function useCreateAnswerSetMutation(baseOptions?: Apollo.MutationHookOptions<CreateAnswerSetMutation, CreateAnswerSetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateAnswerSetMutation, CreateAnswerSetMutationVariables>(CreateAnswerSetDocument, options);
+      }
+export type CreateAnswerSetMutationHookResult = ReturnType<typeof useCreateAnswerSetMutation>;
+export type CreateAnswerSetMutationResult = Apollo.MutationResult<CreateAnswerSetMutation>;
+export type CreateAnswerSetMutationOptions = Apollo.BaseMutationOptions<CreateAnswerSetMutation, CreateAnswerSetMutationVariables>;
+export const GetAnswerSetDocument = gql`
+    query getAnswerSet($studentId: Int!) {
+  getAnswerSet(studentId: $studentId) {
+    studentId
+    title
+    answers {
+      itemNumber
+      isCorrect
+      question
+      answer
+    }
+    quizSet {
+      title
+      quizzes {
+        itemNumber
+        question
+        answer
+      }
+      creatorId
+    }
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetAnswerSetQuery__
+ *
+ * To run a query within a React component, call `useGetAnswerSetQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAnswerSetQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAnswerSetQuery({
+ *   variables: {
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useGetAnswerSetQuery(baseOptions: Apollo.QueryHookOptions<GetAnswerSetQuery, GetAnswerSetQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAnswerSetQuery, GetAnswerSetQueryVariables>(GetAnswerSetDocument, options);
+      }
+export function useGetAnswerSetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAnswerSetQuery, GetAnswerSetQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAnswerSetQuery, GetAnswerSetQueryVariables>(GetAnswerSetDocument, options);
+        }
+export type GetAnswerSetQueryHookResult = ReturnType<typeof useGetAnswerSetQuery>;
+export type GetAnswerSetLazyQueryHookResult = ReturnType<typeof useGetAnswerSetLazyQuery>;
+export type GetAnswerSetQueryResult = Apollo.QueryResult<GetAnswerSetQuery, GetAnswerSetQueryVariables>;
+export const GetQuizSetDocument = gql`
+    mutation getQuizSet($quizSetCode: String!) {
+  getQuizSet(quizSetCode: $quizSetCode) {
+    id
+    quizSetCode
+    creatorId
+    title
+    quizzes {
       id
-      quizId
-      letterItem
-      letterContent
+      quizCode
+      itemNumber
+      question
+      creatorId
+    }
+  }
+}
+    `;
+export type GetQuizSetMutationFn = Apollo.MutationFunction<GetQuizSetMutation, GetQuizSetMutationVariables>;
+
+/**
+ * __useGetQuizSetMutation__
+ *
+ * To run a mutation, you first call `useGetQuizSetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetQuizSetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getQuizSetMutation, { data, loading, error }] = useGetQuizSetMutation({
+ *   variables: {
+ *      quizSetCode: // value for 'quizSetCode'
+ *   },
+ * });
+ */
+export function useGetQuizSetMutation(baseOptions?: Apollo.MutationHookOptions<GetQuizSetMutation, GetQuizSetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetQuizSetMutation, GetQuizSetMutationVariables>(GetQuizSetDocument, options);
+      }
+export type GetQuizSetMutationHookResult = ReturnType<typeof useGetQuizSetMutation>;
+export type GetQuizSetMutationResult = Apollo.MutationResult<GetQuizSetMutation>;
+export type GetQuizSetMutationOptions = Apollo.BaseMutationOptions<GetQuizSetMutation, GetQuizSetMutationVariables>;
+export const GetStudentDocument = gql`
+    query getStudent {
+  getStudent {
+    student {
+      id
+      email
+    }
+    answerSets {
+      id
+      studentId
+      title
+      answers {
+        answer
+        isCorrect
+        answerSetId
+        itemNumber
+      }
     }
   }
 }
     `;
 
 /**
- * __useGetQuizQuery__
+ * __useGetStudentQuery__
  *
- * To run a query within a React component, call `useGetQuizQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetQuizQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetStudentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetStudentQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetQuizQuery({
+ * const { data, loading, error } = useGetStudentQuery({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetQuizQuery(baseOptions: Apollo.QueryHookOptions<GetQuizQuery, GetQuizQueryVariables>) {
+export function useGetStudentQuery(baseOptions?: Apollo.QueryHookOptions<GetStudentQuery, GetStudentQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetQuizQuery, GetQuizQueryVariables>(GetQuizDocument, options);
+        return Apollo.useQuery<GetStudentQuery, GetStudentQueryVariables>(GetStudentDocument, options);
       }
-export function useGetQuizLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetQuizQuery, GetQuizQueryVariables>) {
+export function useGetStudentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStudentQuery, GetStudentQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetQuizQuery, GetQuizQueryVariables>(GetQuizDocument, options);
+          return Apollo.useLazyQuery<GetStudentQuery, GetStudentQueryVariables>(GetStudentDocument, options);
         }
-export type GetQuizQueryHookResult = ReturnType<typeof useGetQuizQuery>;
-export type GetQuizLazyQueryHookResult = ReturnType<typeof useGetQuizLazyQuery>;
-export type GetQuizQueryResult = Apollo.QueryResult<GetQuizQuery, GetQuizQueryVariables>;
+export type GetStudentQueryHookResult = ReturnType<typeof useGetStudentQuery>;
+export type GetStudentLazyQueryHookResult = ReturnType<typeof useGetStudentLazyQuery>;
+export type GetStudentQueryResult = Apollo.QueryResult<GetStudentQuery, GetStudentQueryVariables>;

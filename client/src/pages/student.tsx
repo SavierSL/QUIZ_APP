@@ -16,7 +16,6 @@ import { MotionBox } from "../components/motionElements";
 import InputField from "../components/inputFIeld";
 import { Form, Formik } from "formik";
 import Wrapper from "../components/wrapper";
-import { useGetQuizQuery } from "../generated/graphql";
 
 export interface StudentProps {}
 

@@ -1,0 +1,22 @@
+query getAnswerSet($studentId: Int!) {
+  getAnswerSet(studentId: $studentId) {
+    studentId
+    title
+    answers {
+      itemNumber
+      isCorrect
+      question
+      answer
+    }
+    quizSet {
+      title
+      quizzes {
+        itemNumber
+        question
+        answer
+      }
+      creatorId
+    }
+    createdAt
+  }
+}

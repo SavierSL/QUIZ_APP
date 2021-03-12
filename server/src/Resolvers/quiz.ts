@@ -27,7 +27,7 @@ export class QuizResolver {
     );
     return quiz;
   }
-  @Query(() => QuizSet, { nullable: true })
+  @Mutation(() => QuizSet, { nullable: true })
   async getQuizSet(
     @Arg("quizSetCode") quizSetCode: string,
     @Ctx() { req }: MyContext
