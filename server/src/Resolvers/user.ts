@@ -136,7 +136,9 @@ export class UserResolver {
   async getStudent(@Ctx() { req }: MyContext): Promise<StudentData | null> {
     const student = await Student.findOne(
       { id: req.session.userId },
-      { relations: ["answerSets"] }
+      {
+        relations: ["answerSets"],
+      }
     );
     if (!student) {
       return null;

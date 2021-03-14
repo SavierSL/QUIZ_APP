@@ -7,12 +7,17 @@ import {
   Student,
   Answer,
 } from "../../generated/graphql";
-import { Box, Button, Text, Flex } from "@chakra-ui/react";
+import { Box, Button, Text, Flex, Link } from "@chakra-ui/react";
+import NextLink from "next/link";
+import React from "react";
 
 export interface StudentQuizBoxProps {
   quiz: ({
     __typename?: "AnswerSet";
-  } & Pick<AnswerSet, "id" | "studentId" | "title"> & {
+  } & Pick<
+    AnswerSet,
+    "title" | "id" | "studentId" | "totalItems" | "subject" | "score"
+  > & {
       answers?: ({
         __typename?: "Answer";
       } & Pick<
@@ -27,7 +32,32 @@ const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quiz }) => {
     <>
       <Box>
         {quiz.map((quiz) => {
-          return <Text>{quiz.title}</Text>;
+          return (
+            //
+            <>
+              <Flex>
+                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+                  <Text>{quiz.title}</Text>
+                </Box>
+                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+                  <Text>{quiz.totalItems}</Text>
+                </Box>
+                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+                  <Text>{quiz.subject}</Text>
+                </Box>
+                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+                  <Flex alignItems="center" justifyContent="center">
+                    <Text>{quiz.score ? quiz.score : "---"}</Text>
+                    <Button ml="1rem">
+                      <NextLink href="/answer/[id]" as={`/answer/${quiz.id}`}>
+                        Answer
+                      </NextLink>
+                    </Button>
+                  </Flex>
+                </Box>
+              </Flex>
+            </>
+          );
         })}
       </Box>
     </>

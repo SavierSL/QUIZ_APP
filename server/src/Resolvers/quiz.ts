@@ -4,6 +4,7 @@ import { QuizSet } from "../Entities/QuizSet";
 import { getConnection, LessThan } from "typeorm";
 import { MyContext } from "../types";
 import crypto from "crypto";
+import { AnswerSet } from "src/Entities/AnswerSet";
 const set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 function generate(length: number) {
@@ -61,10 +62,12 @@ export class QuizResolver {
   @Mutation(() => QuizSet)
   async createQuizSet(
     @Arg("title") title: string,
+    @Arg("subject") subject: string,
     @Arg("creatorId") creatorId: number
   ) {
     const quizSetCode = generate(6);
     const quizSet = await QuizSet.create({
+      subject,
       title,
       creatorId,
       quizSetCode,
@@ -89,6 +92,12 @@ export class QuizResolver {
       creatorId,
       quizCode,
     }).save();
+    const answerSet1 = await QuizSet.findOne({ id: quizSetId });
+    await QuizSet.update(
+      { id: quizSetId },
+      { totalItems: answerSet1?.totalItems ? answerSet1?.totalItems + 1 : 1 }
+    );
+
     return makeQuiz;
   }
 }

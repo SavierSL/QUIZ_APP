@@ -33,6 +33,10 @@ export class QuizSet extends BaseEntity {
   @Column()
   title!: string;
 
+  @Field()
+  @Column()
+  subject!: string;
+
   @Field(() => [Quiz], { nullable: true })
   @OneToMany(() => Quiz, (quiz) => quiz.quizSet)
   quizzes: Quiz[];
@@ -40,6 +44,10 @@ export class QuizSet extends BaseEntity {
   @Field(() => AnswerSet, { nullable: true })
   @OneToOne(() => AnswerSet, (answerSet) => answerSet.quizSet)
   answerSet: AnswerSet;
+
+  @Field(() => Int, { nullable: true })
+  @Column({ nullable: true })
+  totalItems: number;
 
   @Field(() => String)
   @CreateDateColumn()

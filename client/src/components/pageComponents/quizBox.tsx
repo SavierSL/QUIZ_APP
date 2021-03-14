@@ -3,6 +3,8 @@ import {
   Quiz,
   useCreateAnswerSetMutation,
   useGetStudentQuery,
+  GetQuizSetDocument,
+  GetStudentDocument,
 } from "../../generated/graphql";
 import { Box, Button, Text, Flex } from "@chakra-ui/react";
 
@@ -25,10 +27,13 @@ const QuizBox: React.FC<QuizBoxProps> = ({ quizSet }) => {
           <Text>{quizSet.title}</Text>
           <Button
             onClick={() => {
-              createAnswerSet({ variables: { quizSetId: quizSet.id } });
+              createAnswerSet({
+                variables: { quizSetId: quizSet.id },
+                refetchQueries: [{ query: GetStudentDocument }],
+              });
             }}
           >
-            ANSWER
+            ADD
           </Button>
         </Flex>
       </Box>

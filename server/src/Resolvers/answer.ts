@@ -54,18 +54,17 @@ export class AnswerResolver extends BaseEntity {
       quizSetId,
       studentId: req.session.userId,
       title: quizSet?.title,
+      totalItems: quizSet?.totalItems,
+      subject: quizSet?.subject,
     }).save();
     return getAnswerSet;
   }
 
-  @Query(() => AnswerSet, { nullable: true })
+  @Query(() => [AnswerSet], { nullable: true })
   async getAnswerSet(@Arg("studentId", () => Int) studentId: number) {
-    const getAnswerSet = await AnswerSet.findOne(
-      {
-        studentId,
-      },
-      { relations: ["answers"] }
-    );
+    const getAnswerSet = await AnswerSet.find({
+      where: { studentId },
+    });
     return getAnswerSet;
   }
 }

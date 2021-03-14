@@ -2,19 +2,32 @@ import React from "react";
 import MainContainer from "../../components/MainContainer";
 import Layout from "../../components/layout";
 import Wrapper from "../../components/wrapper";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  cookieStorageManager,
+  Flex,
+  Text,
+} from "@chakra-ui/react";
 import InputField from "../../components/inputFIeld";
 import NextLink from "next/link";
 import Quiz from "../../components/pageComponents/quiz";
 import { withApollo } from "../../utils/withApollo";
-import { useGetStudentQuery } from "../../generated/graphql";
+import {
+  useGetAnswerSetQuery,
+  useGetStudentQuery,
+} from "../../generated/graphql";
 import StudentQuizBox from "../../components/pageComponents/studentQuizBox";
 
 export interface AdminHomeProps {}
 
 const StudentHome: React.FC<AdminHomeProps> = () => {
   const { data: studentData } = useGetStudentQuery();
+  const { data: AnswerSetData } = useGetAnswerSetQuery({
+    variables: { studentId: studentData?.getStudent?.student?.id },
+  });
   console.log(studentData);
+  console.log(AnswerSetData);
   const tableTitles = ["Quiz Name", "Quiz Items", "Quiz Subject", "Quiz Score"];
 
   const isBorder = (title: string) => {

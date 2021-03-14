@@ -21,7 +21,7 @@ import { Student } from "./Entities/Student";
 import { UserResolver } from "./Resolvers/user";
 import __prod__ from "./constants";
 
-//declare this for the session
+//declare this for the session //
 declare module "express-session" {
   interface Session {
     userId: number; //
@@ -41,10 +41,10 @@ const main = async () => {
   });
   // await QuizSet.delete({});
   // await MultipleChoices.delete({});
-  // // await Quiz.delete({});
+  // await Quiz.delete({});
   // await Answer.delete({}); //
   // await AnswerSet.delete({});
-  // app
+  // app // run again // ey ha
   const app = express();
 
   // cookie

@@ -8,6 +8,9 @@ query getStudent {
       id
       studentId
       title
+      totalItems
+      score
+      subject
       answers {
         answer
         isCorrect

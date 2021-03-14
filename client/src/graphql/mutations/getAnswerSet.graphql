@@ -2,6 +2,8 @@ query getAnswerSet($studentId: Int!) {
   getAnswerSet(studentId: $studentId) {
     studentId
     title
+    subject
+    score
     answers {
       itemNumber
       isCorrect

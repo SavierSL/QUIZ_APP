@@ -17,7 +17,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   getQuiz?: Maybe<Quiz>;
-  getAnswerSet?: Maybe<AnswerSet>;
+  getAnswerSet?: Maybe<Array<AnswerSet>>;
   getStudent?: Maybe<StudentData>;
 };
 
@@ -52,8 +52,10 @@ export type QuizSet = {
   quizSetCode: Scalars['String'];
   creatorId: Scalars['Float'];
   title: Scalars['String'];
+  subject: Scalars['String'];
   quizzes?: Maybe<Array<Quiz>>;
   answerSet?: Maybe<AnswerSet>;
+  totalItems?: Maybe<Scalars['Int']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -64,8 +66,11 @@ export type AnswerSet = {
   studentId: Scalars['Float'];
   quizSetId: Scalars['Float'];
   title: Scalars['String'];
+  subject: Scalars['String'];
+  score?: Maybe<Scalars['String']>;
   answers?: Maybe<Array<Answer>>;
   quizSet?: Maybe<QuizSet>;
+  totalItems?: Maybe<Scalars['Int']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -132,6 +137,7 @@ export type MutationGetQuizSetArgs = {
 
 export type MutationCreateQuizSetArgs = {
   creatorId: Scalars['Float'];
+  subject: Scalars['String'];
   title: Scalars['String'];
 };
 
@@ -219,9 +225,9 @@ export type GetAnswerSetQueryVariables = Exact<{
 
 export type GetAnswerSetQuery = (
   { __typename?: 'Query' }
-  & { getAnswerSet?: Maybe<(
+  & { getAnswerSet?: Maybe<Array<(
     { __typename?: 'AnswerSet' }
-    & Pick<AnswerSet, 'studentId' | 'title' | 'createdAt'>
+    & Pick<AnswerSet, 'studentId' | 'title' | 'subject' | 'score' | 'createdAt'>
     & { answers?: Maybe<Array<(
       { __typename?: 'Answer' }
       & Pick<Answer, 'itemNumber' | 'isCorrect' | 'question' | 'answer'>
@@ -233,7 +239,7 @@ export type GetAnswerSetQuery = (
         & Pick<Quiz, 'itemNumber' | 'question' | 'answer'>
       )>> }
     )> }
-  )> }
+  )>> }
 );
 
 export type GetQuizSetMutationVariables = Exact<{
@@ -245,7 +251,7 @@ export type GetQuizSetMutation = (
   { __typename?: 'Mutation' }
   & { getQuizSet?: Maybe<(
     { __typename?: 'QuizSet' }
-    & Pick<QuizSet, 'id' | 'quizSetCode' | 'creatorId' | 'title'>
+    & Pick<QuizSet, 'id' | 'quizSetCode' | 'creatorId' | 'title' | 'subject'>
     & { quizzes?: Maybe<Array<(
       { __typename?: 'Quiz' }
       & Pick<Quiz, 'id' | 'quizCode' | 'itemNumber' | 'question' | 'creatorId'>
@@ -265,7 +271,7 @@ export type GetStudentQuery = (
       & Pick<Student, 'id' | 'email'>
     ), answerSets: Array<(
       { __typename?: 'AnswerSet' }
-      & Pick<AnswerSet, 'id' | 'studentId' | 'title'>
+      & Pick<AnswerSet, 'id' | 'studentId' | 'title' | 'totalItems' | 'score' | 'subject'>
       & { answers?: Maybe<Array<(
         { __typename?: 'Answer' }
         & Pick<Answer, 'answer' | 'isCorrect' | 'answerSetId' | 'itemNumber'>
@@ -330,6 +336,8 @@ export const GetAnswerSetDocument = gql`
   getAnswerSet(studentId: $studentId) {
     studentId
     title
+    subject
+    score
     answers {
       itemNumber
       isCorrect
@@ -384,6 +392,7 @@ export const GetQuizSetDocument = gql`
     quizSetCode
     creatorId
     title
+    subject
     quizzes {
       id
       quizCode
@@ -431,6 +440,9 @@ export const GetStudentDocument = gql`
       id
       studentId
       title
+      totalItems
+      score
+      subject
       answers {
         answer
         isCorrect
