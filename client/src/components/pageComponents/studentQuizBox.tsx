@@ -16,7 +16,13 @@ export interface StudentQuizBoxProps {
     __typename?: "AnswerSet";
   } & Pick<
     AnswerSet,
-    "title" | "id" | "studentId" | "totalItems" | "subject" | "score"
+    | "title"
+    | "id"
+    | "studentId"
+    | "totalItems"
+    | "subject"
+    | "score"
+    | "quizSetId"
   > & {
       answers?: ({
         __typename?: "Answer";
@@ -49,7 +55,10 @@ const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quiz }) => {
                   <Flex alignItems="center" justifyContent="center">
                     <Text>{quiz.score ? quiz.score : "---"}</Text>
                     <Button ml="1rem">
-                      <NextLink href="/answer/[id]" as={`/answer/${quiz.id}`}>
+                      <NextLink
+                        href="/answer/[id]"
+                        as={`/answer/${quiz.quizSetId}`}
+                      >
                         Answer
                       </NextLink>
                     </Button>

@@ -1,0 +1,22 @@
+query getQuizSetv2($id: Int!) {
+  getQuizSetv2(id: $id) {
+    id
+    quizSetCode
+    subject
+    title
+    quizzes {
+      quizSetId
+      quizCode
+      id
+      itemNumber
+      question
+      multipleChoices {
+        quizId
+        id
+        letterItem
+        letterContent
+      }
+      answer
+    }
+  }
+}

@@ -36,7 +36,9 @@ export class QuizResolver {
     console.log(`quiz set${req.session.userId}`);
     const quiz = await QuizSet.findOne(
       { quizSetCode: quizSetCode },
-      { relations: ["quizzes", "quizzes.multipleChoices"] }
+      {
+        relations: ["answerSet", "answerSet.answers"],
+      }
     );
     // const quiz = await getConnection().query(
     //   `
@@ -59,6 +61,15 @@ export class QuizResolver {
     // );
     return quiz;
   }
+  @Query(() => QuizSet)
+  async getQuizSetv2(@Arg("id", () => Int) id: number) {
+    const quizSet = await QuizSet.findOne(
+      { id },
+      { relations: ["quizzes", "quizzes.multipleChoices"] }
+    );
+    return quizSet;
+  }
+
   @Mutation(() => QuizSet)
   async createQuizSet(
     @Arg("title") title: string,

@@ -13,6 +13,7 @@ import {
 import { Field, Float, Int, ObjectType } from "type-graphql";
 import { Quiz } from "./Quiz";
 import { AnswerSet } from "./AnswerSet";
+import { Teacher } from "./Teacher";
 
 @ObjectType()
 @Entity()
@@ -41,8 +42,12 @@ export class QuizSet extends BaseEntity {
   @OneToMany(() => Quiz, (quiz) => quiz.quizSet)
   quizzes: Quiz[];
 
+  @Field(() => Teacher)
+  @ManyToOne(() => Teacher, (creator) => creator.quizSet)
+  creator: Teacher;
+
   @Field(() => AnswerSet, { nullable: true })
-  @OneToOne(() => AnswerSet, (answerSet) => answerSet.quizSet)
+  @OneToMany(() => AnswerSet, (answerSet) => answerSet.quizSet)
   answerSet: AnswerSet;
 
   @Field(() => Int, { nullable: true })

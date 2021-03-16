@@ -18,6 +18,7 @@ import { Answer } from "./Entities/Answer";
 import { AnswerSet } from "./Entities/AnswerSet";
 import { Quiz } from "./Entities/Quiz";
 import { Student } from "./Entities/Student";
+import { Teacher } from "./Entities/Teacher";
 import { UserResolver } from "./Resolvers/user";
 import __prod__ from "./constants";
 
@@ -25,6 +26,7 @@ import __prod__ from "./constants";
 declare module "express-session" {
   interface Session {
     userId: number; //
+    teacherId: number; //
   }
 }
 
@@ -37,14 +39,22 @@ const main = async () => {
     password: "xxkaa548",
     logging: true,
     synchronize: true,
-    entities: [Quiz, MultipleChoices, QuizSet, Answer, AnswerSet, Student],
+    entities: [
+      Quiz,
+      MultipleChoices,
+      QuizSet,
+      Answer,
+      AnswerSet,
+      Student,
+      Teacher,
+    ],
   });
   // await QuizSet.delete({});
-  // await MultipleChoices.delete({});
+  // await MultipleChoices.delete({}); //
   // await Quiz.delete({});
   // await Answer.delete({}); //
   // await AnswerSet.delete({});
-  // app // run again // ey ha
+  // app // run again //
   const app = express();
 
   // cookie

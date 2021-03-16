@@ -1,0 +1,21 @@
+mutation answer(
+  $quizSetId: Int!
+  $itemNumber: Int!
+  $quizId: Int!
+  $answer: String!
+) {
+  answer(
+    quizSetId: $quizSetId
+    itemNumber: $itemNumber
+    quizId: $quizId
+    answer: $answer
+  ) {
+    itemNumber
+    answerSetId
+    quizId
+    question
+    answer
+    isCorrect
+    createdAt
+  }
+}

@@ -5,14 +5,15 @@ import { BaseEntity } from "typeorm";
 import { AnswerSet } from "../Entities/AnswerSet";
 import { QuizSet } from "../Entities/QuizSet";
 import { MyContext } from "../types";
+import { query } from "express";
 
 @Resolver()
 export class AnswerResolver extends BaseEntity {
   @Mutation(() => Answer)
   async answer(
-    @Arg("quizSetId") quizSetId: number,
-    @Arg("itemNumber") itemNumber: number,
-    @Arg("quizId") quizId: number,
+    @Arg("quizSetId", () => Int) quizSetId: number,
+    @Arg("itemNumber", () => Int) itemNumber: number,
+    @Arg("quizId", () => Int) quizId: number,
     @Arg("answer") answer: string,
     @Ctx() { req }: MyContext
   ) {
@@ -64,7 +65,18 @@ export class AnswerResolver extends BaseEntity {
   async getAnswerSet(@Arg("studentId", () => Int) studentId: number) {
     const getAnswerSet = await AnswerSet.find({
       where: { studentId },
+      relations: ["answers"],
     });
     return getAnswerSet;
+  }
+  @Query(() => [AnswerSet])
+  async getAnswerSetTeacher(@Arg("quizSetId", () => Int) quizSetId: number) {
+    const getAnswerSets = await AnswerSet.find({
+      relations: ["answers", "student"],
+      where: {
+        quizSetId: quizSetId,
+      },
+    });
+    return getAnswerSets;
   }
 }

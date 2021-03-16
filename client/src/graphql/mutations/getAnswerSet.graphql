@@ -4,6 +4,7 @@ query getAnswerSet($studentId: Int!) {
     title
     subject
     score
+
     answers {
       itemNumber
       isCorrect

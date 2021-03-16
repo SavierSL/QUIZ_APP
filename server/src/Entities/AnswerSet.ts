@@ -47,11 +47,12 @@ export class AnswerSet extends BaseEntity {
   @OneToMany(() => Answer, (answer) => answer.answerSet)
   answers: Answer[];
 
+  @Field(() => Student)
   @ManyToOne(() => Student, (student) => student.answerSets)
   student!: Student;
 
   @Field(() => QuizSet, { nullable: true })
-  @OneToOne(() => QuizSet, (quizSet) => quizSet.answerSet)
+  @ManyToOne(() => QuizSet, (quizSet) => quizSet.answerSet)
   quizSet: QuizSet;
 
   @Field(() => Int, { nullable: true })
