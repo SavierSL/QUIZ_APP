@@ -1,4 +1,4 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 
 import { MultipleChoices } from "../Entities/MultipleChoices";
 
@@ -8,7 +8,7 @@ export class MultippleChoiceResolver {
   async createMultipleChoice(
     @Arg("letterItem") letterItem: string,
     @Arg("letterContent") letterContent: string,
-    @Arg("quizId")
+    @Arg("quizId", () => Int)
     quizId: number
   ): Promise<MultipleChoices> {
     const createMultipleChoice = await MultipleChoices.create({

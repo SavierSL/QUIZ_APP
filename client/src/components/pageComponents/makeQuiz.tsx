@@ -12,6 +12,7 @@ export interface MakeQuizProps {
 interface QuizData {
   question: string;
   answer: string;
+  id: number;
 }
 
 const MakeQuiz: React.FC<MakeQuizProps> = ({ itemNumber, quizSetId }) => {
@@ -49,6 +50,7 @@ const MakeQuiz: React.FC<MakeQuizProps> = ({ itemNumber, quizSetId }) => {
             setQuizData({
               question: questionData.data.makeQuiz.question,
               answer: questionData.data.makeQuiz.answer,
+              id: questionData.data.makeQuiz.id,
             });
             setIsSetQuestion(true);
           }}
@@ -80,7 +82,11 @@ const MakeQuiz: React.FC<MakeQuizProps> = ({ itemNumber, quizSetId }) => {
                   {multipleChoice.map((letter) => {
                     return (
                       <>
-                        <MultipleChoice letter={letter} />
+                        <MultipleChoice
+                          letter={letter}
+                          itemNumber={itemNumber}
+                          quizId={quizData.id}
+                        />
                       </>
                     );
                   })}

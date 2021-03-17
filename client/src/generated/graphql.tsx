@@ -176,7 +176,7 @@ export type MutationMakeQuizArgs = {
 
 
 export type MutationCreateMultipleChoiceArgs = {
-  quizId: Scalars['Float'];
+  quizId: Scalars['Int'];
   letterContent: Scalars['String'];
   letterItem: Scalars['String'];
 };
@@ -268,6 +268,21 @@ export type CreateAnswerSetMutation = (
       )>> }
     )> }
   )> }
+);
+
+export type CreateMultipleChoiceMutationVariables = Exact<{
+  letterItem: Scalars['String'];
+  letterContent: Scalars['String'];
+  quizId: Scalars['Int'];
+}>;
+
+
+export type CreateMultipleChoiceMutation = (
+  { __typename?: 'Mutation' }
+  & { createMultipleChoice: (
+    { __typename?: 'MultipleChoices' }
+    & Pick<MultipleChoices, 'quizId' | 'id' | 'letterItem' | 'letterContent'>
+  ) }
 );
 
 export type CreateQuizSetMutationVariables = Exact<{
@@ -383,7 +398,7 @@ export type MakeQuizMutation = (
   { __typename?: 'Mutation' }
   & { makeQuiz: (
     { __typename?: 'Quiz' }
-    & Pick<Quiz, 'answer' | 'itemNumber' | 'quizSetId' | 'question'>
+    & Pick<Quiz, 'id' | 'answer' | 'itemNumber' | 'quizSetId' | 'question'>
   ) }
 );
 
@@ -485,6 +500,48 @@ export function useCreateAnswerSetMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateAnswerSetMutationHookResult = ReturnType<typeof useCreateAnswerSetMutation>;
 export type CreateAnswerSetMutationResult = Apollo.MutationResult<CreateAnswerSetMutation>;
 export type CreateAnswerSetMutationOptions = Apollo.BaseMutationOptions<CreateAnswerSetMutation, CreateAnswerSetMutationVariables>;
+export const CreateMultipleChoiceDocument = gql`
+    mutation createMultipleChoice($letterItem: String!, $letterContent: String!, $quizId: Int!) {
+  createMultipleChoice(
+    letterItem: $letterItem
+    letterContent: $letterContent
+    quizId: $quizId
+  ) {
+    quizId
+    id
+    letterItem
+    letterContent
+  }
+}
+    `;
+export type CreateMultipleChoiceMutationFn = Apollo.MutationFunction<CreateMultipleChoiceMutation, CreateMultipleChoiceMutationVariables>;
+
+/**
+ * __useCreateMultipleChoiceMutation__
+ *
+ * To run a mutation, you first call `useCreateMultipleChoiceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMultipleChoiceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMultipleChoiceMutation, { data, loading, error }] = useCreateMultipleChoiceMutation({
+ *   variables: {
+ *      letterItem: // value for 'letterItem'
+ *      letterContent: // value for 'letterContent'
+ *      quizId: // value for 'quizId'
+ *   },
+ * });
+ */
+export function useCreateMultipleChoiceMutation(baseOptions?: Apollo.MutationHookOptions<CreateMultipleChoiceMutation, CreateMultipleChoiceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMultipleChoiceMutation, CreateMultipleChoiceMutationVariables>(CreateMultipleChoiceDocument, options);
+      }
+export type CreateMultipleChoiceMutationHookResult = ReturnType<typeof useCreateMultipleChoiceMutation>;
+export type CreateMultipleChoiceMutationResult = Apollo.MutationResult<CreateMultipleChoiceMutation>;
+export type CreateMultipleChoiceMutationOptions = Apollo.BaseMutationOptions<CreateMultipleChoiceMutation, CreateMultipleChoiceMutationVariables>;
 export const CreateQuizSetDocument = gql`
     mutation createQuizSet($title: String!, $subject: String!) {
   createQuizSet(title: $title, subject: $subject) {
@@ -737,6 +794,7 @@ export const MakeQuizDocument = gql`
     answer: $answer
     quizSetId: $quizSetId
   ) {
+    id
     answer
     itemNumber
     quizSetId

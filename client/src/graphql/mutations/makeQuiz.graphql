@@ -10,6 +10,7 @@ mutation makeQuiz(
     answer: $answer
     quizSetId: $quizSetId
   ) {
+    id
     answer
     itemNumber
     quizSetId

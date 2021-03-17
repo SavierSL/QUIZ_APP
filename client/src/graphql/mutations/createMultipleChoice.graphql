@@ -1,0 +1,16 @@
+mutation createMultipleChoice(
+  $letterItem: String!
+  $letterContent: String!
+  $quizId: Int!
+) {
+  createMultipleChoice(
+    letterItem: $letterItem
+    letterContent: $letterContent
+    quizId: $quizId
+  ) {
+    quizId
+    id
+    letterItem
+    letterContent
+  }
+}
