@@ -1,0 +1,13 @@
+mutation createQuizSet($title: String!, $subject: String!) {
+  createQuizSet(title: $title, subject: $subject) {
+    quizSetCode
+    id
+    title
+    subject
+    quizzes {
+      itemNumber
+      question
+    }
+    creatorId
+  }
+}

@@ -74,13 +74,13 @@ export class QuizResolver {
   async createQuizSet(
     @Arg("title") title: string,
     @Arg("subject") subject: string,
-    @Arg("creatorId") creatorId: number
+    @Ctx() { req }: MyContext
   ) {
     const quizSetCode = generate(6);
     const quizSet = await QuizSet.create({
       subject,
       title,
-      creatorId,
+      creatorId: req.session.teacherId,
       quizSetCode,
     }).save();
     return quizSet;
@@ -89,10 +89,10 @@ export class QuizResolver {
   @Mutation(() => Quiz)
   async makeQuiz(
     @Arg("question") question: string,
-    @Arg("itemNumber") itemNumber: number,
+    @Arg("itemNumber", () => Int) itemNumber: number,
     @Arg("answer") answer: string,
-    @Arg("quizSetId") quizSetId: number,
-    @Arg("creatorId") creatorId: number
+    @Arg("quizSetId", () => Int) quizSetId: number,
+    @Ctx() { req }: MyContext
   ) {
     const quizCode = generate(6);
     const makeQuiz = await Quiz.create({
@@ -100,7 +100,7 @@ export class QuizResolver {
       answer,
       quizSetId,
       itemNumber,
-      creatorId,
+      creatorId: req.session.teacherId,
       quizCode,
     }).save();
     const answerSet1 = await QuizSet.findOne({ id: quizSetId });

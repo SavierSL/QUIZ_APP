@@ -2,7 +2,7 @@ import { Box, Button } from "@chakra-ui/react";
 import React from "react";
 import Layout from "../../components/layout";
 import MainContainer from "../../components/MainContainer";
-import CreateQuiz from "../../components/pageComponents/createQuiz";
+import CreateQuiz from "../../components/pageComponents/createQuizSet";
 import Wrapper from "../../components/wrapper";
 
 export interface TeacherHomeProps {}

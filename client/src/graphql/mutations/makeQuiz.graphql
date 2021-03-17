@@ -1,0 +1,18 @@
+mutation makeQuiz(
+  $question: String!
+  $itemNumber: Int!
+  $answer: String!
+  $quizSetId: Int!
+) {
+  makeQuiz(
+    question: $question
+    itemNumber: $itemNumber
+    answer: $answer
+    quizSetId: $quizSetId
+  ) {
+    answer
+    itemNumber
+    quizSetId
+    question
+  }
+}

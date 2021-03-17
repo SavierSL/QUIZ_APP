@@ -19,6 +19,7 @@ export type Query = {
   getQuiz?: Maybe<Quiz>;
   getQuizSetv2: QuizSet;
   getAnswerSet?: Maybe<Array<AnswerSet>>;
+  getAnswerSetTeacher: Array<AnswerSet>;
   getStudent?: Maybe<StudentData>;
 };
 
@@ -35,6 +36,11 @@ export type QueryGetQuizSetv2Args = {
 
 export type QueryGetAnswerSetArgs = {
   studentId: Scalars['Int'];
+};
+
+
+export type QueryGetAnswerSetTeacherArgs = {
+  quizSetId: Scalars['Int'];
 };
 
 export type Quiz = {
@@ -60,8 +66,19 @@ export type QuizSet = {
   title: Scalars['String'];
   subject: Scalars['String'];
   quizzes?: Maybe<Array<Quiz>>;
+  creator: Teacher;
   answerSet?: Maybe<AnswerSet>;
   totalItems?: Maybe<Scalars['Int']>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type Teacher = {
+  __typename?: 'Teacher';
+  id: Scalars['Int'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  quizSet?: Maybe<Array<QuizSet>>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -75,6 +92,7 @@ export type AnswerSet = {
   subject: Scalars['String'];
   score?: Maybe<Scalars['String']>;
   answers?: Maybe<Array<Answer>>;
+  student: Student;
   quizSet?: Maybe<QuizSet>;
   totalItems?: Maybe<Scalars['Int']>;
   createdAt: Scalars['String'];
@@ -96,6 +114,16 @@ export type Answer = {
   updatedAt: Scalars['String'];
 };
 
+export type Student = {
+  __typename?: 'Student';
+  id: Scalars['Int'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  answerSets?: Maybe<Array<AnswerSet>>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
 export type MultipleChoices = {
   __typename?: 'MultipleChoices';
   id: Scalars['Int'];
@@ -113,16 +141,6 @@ export type StudentData = {
   answerSets: Array<AnswerSet>;
 };
 
-export type Student = {
-  __typename?: 'Student';
-  id: Scalars['Int'];
-  email: Scalars['String'];
-  password: Scalars['String'];
-  answerSets?: Maybe<Array<AnswerSet>>;
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   getQuizSet?: Maybe<QuizSet>;
@@ -132,7 +150,9 @@ export type Mutation = {
   answer: Answer;
   createAnswerSet?: Maybe<AnswerSet>;
   registerStudent: ResponseField;
+  registerTeacher: ResponseField;
   logInStudent: ResponseField;
+  logInTeacher: ResponseField;
 };
 
 
@@ -142,17 +162,15 @@ export type MutationGetQuizSetArgs = {
 
 
 export type MutationCreateQuizSetArgs = {
-  creatorId: Scalars['Float'];
   subject: Scalars['String'];
   title: Scalars['String'];
 };
 
 
 export type MutationMakeQuizArgs = {
-  creatorId: Scalars['Float'];
-  quizSetId: Scalars['Float'];
+  quizSetId: Scalars['Int'];
   answer: Scalars['String'];
-  itemNumber: Scalars['Float'];
+  itemNumber: Scalars['Int'];
   question: Scalars['String'];
 };
 
@@ -183,7 +201,19 @@ export type MutationRegisterStudentArgs = {
 };
 
 
+export type MutationRegisterTeacherArgs = {
+  password: Scalars['String'];
+  email: Scalars['String'];
+};
+
+
 export type MutationLogInStudentArgs = {
+  password: Scalars['String'];
+  email: Scalars['String'];
+};
+
+
+export type MutationLogInTeacherArgs = {
   password: Scalars['String'];
   email: Scalars['String'];
 };
@@ -191,7 +221,7 @@ export type MutationLogInStudentArgs = {
 export type ResponseField = {
   __typename?: 'ResponseField';
   errors?: Maybe<Array<FieldError>>;
-  student?: Maybe<Student>;
+  user?: Maybe<Student>;
 };
 
 export type FieldError = {
@@ -238,6 +268,24 @@ export type CreateAnswerSetMutation = (
       )>> }
     )> }
   )> }
+);
+
+export type CreateQuizSetMutationVariables = Exact<{
+  title: Scalars['String'];
+  subject: Scalars['String'];
+}>;
+
+
+export type CreateQuizSetMutation = (
+  { __typename?: 'Mutation' }
+  & { createQuizSet: (
+    { __typename?: 'QuizSet' }
+    & Pick<QuizSet, 'quizSetCode' | 'id' | 'title' | 'subject' | 'creatorId'>
+    & { quizzes?: Maybe<Array<(
+      { __typename?: 'Quiz' }
+      & Pick<Quiz, 'itemNumber' | 'question'>
+    )>> }
+  ) }
 );
 
 export type GetAnswerSetQueryVariables = Exact<{
@@ -321,6 +369,22 @@ export type GetStudentQuery = (
       )>> }
     )> }
   )> }
+);
+
+export type MakeQuizMutationVariables = Exact<{
+  question: Scalars['String'];
+  itemNumber: Scalars['Int'];
+  answer: Scalars['String'];
+  quizSetId: Scalars['Int'];
+}>;
+
+
+export type MakeQuizMutation = (
+  { __typename?: 'Mutation' }
+  & { makeQuiz: (
+    { __typename?: 'Quiz' }
+    & Pick<Quiz, 'answer' | 'itemNumber' | 'quizSetId' | 'question'>
+  ) }
 );
 
 
@@ -421,6 +485,48 @@ export function useCreateAnswerSetMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateAnswerSetMutationHookResult = ReturnType<typeof useCreateAnswerSetMutation>;
 export type CreateAnswerSetMutationResult = Apollo.MutationResult<CreateAnswerSetMutation>;
 export type CreateAnswerSetMutationOptions = Apollo.BaseMutationOptions<CreateAnswerSetMutation, CreateAnswerSetMutationVariables>;
+export const CreateQuizSetDocument = gql`
+    mutation createQuizSet($title: String!, $subject: String!) {
+  createQuizSet(title: $title, subject: $subject) {
+    quizSetCode
+    id
+    title
+    subject
+    quizzes {
+      itemNumber
+      question
+    }
+    creatorId
+  }
+}
+    `;
+export type CreateQuizSetMutationFn = Apollo.MutationFunction<CreateQuizSetMutation, CreateQuizSetMutationVariables>;
+
+/**
+ * __useCreateQuizSetMutation__
+ *
+ * To run a mutation, you first call `useCreateQuizSetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateQuizSetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createQuizSetMutation, { data, loading, error }] = useCreateQuizSetMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      subject: // value for 'subject'
+ *   },
+ * });
+ */
+export function useCreateQuizSetMutation(baseOptions?: Apollo.MutationHookOptions<CreateQuizSetMutation, CreateQuizSetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateQuizSetMutation, CreateQuizSetMutationVariables>(CreateQuizSetDocument, options);
+      }
+export type CreateQuizSetMutationHookResult = ReturnType<typeof useCreateQuizSetMutation>;
+export type CreateQuizSetMutationResult = Apollo.MutationResult<CreateQuizSetMutation>;
+export type CreateQuizSetMutationOptions = Apollo.BaseMutationOptions<CreateQuizSetMutation, CreateQuizSetMutationVariables>;
 export const GetAnswerSetDocument = gql`
     query getAnswerSet($studentId: Int!) {
   getAnswerSet(studentId: $studentId) {
@@ -623,3 +729,47 @@ export function useGetStudentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetStudentQueryHookResult = ReturnType<typeof useGetStudentQuery>;
 export type GetStudentLazyQueryHookResult = ReturnType<typeof useGetStudentLazyQuery>;
 export type GetStudentQueryResult = Apollo.QueryResult<GetStudentQuery, GetStudentQueryVariables>;
+export const MakeQuizDocument = gql`
+    mutation makeQuiz($question: String!, $itemNumber: Int!, $answer: String!, $quizSetId: Int!) {
+  makeQuiz(
+    question: $question
+    itemNumber: $itemNumber
+    answer: $answer
+    quizSetId: $quizSetId
+  ) {
+    answer
+    itemNumber
+    quizSetId
+    question
+  }
+}
+    `;
+export type MakeQuizMutationFn = Apollo.MutationFunction<MakeQuizMutation, MakeQuizMutationVariables>;
+
+/**
+ * __useMakeQuizMutation__
+ *
+ * To run a mutation, you first call `useMakeQuizMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMakeQuizMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [makeQuizMutation, { data, loading, error }] = useMakeQuizMutation({
+ *   variables: {
+ *      question: // value for 'question'
+ *      itemNumber: // value for 'itemNumber'
+ *      answer: // value for 'answer'
+ *      quizSetId: // value for 'quizSetId'
+ *   },
+ * });
+ */
+export function useMakeQuizMutation(baseOptions?: Apollo.MutationHookOptions<MakeQuizMutation, MakeQuizMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MakeQuizMutation, MakeQuizMutationVariables>(MakeQuizDocument, options);
+      }
+export type MakeQuizMutationHookResult = ReturnType<typeof useMakeQuizMutation>;
+export type MakeQuizMutationResult = Apollo.MutationResult<MakeQuizMutation>;
+export type MakeQuizMutationOptions = Apollo.BaseMutationOptions<MakeQuizMutation, MakeQuizMutationVariables>;
