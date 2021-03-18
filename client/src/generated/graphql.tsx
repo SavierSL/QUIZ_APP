@@ -20,6 +20,7 @@ export type Query = {
   getQuizSetv2: QuizSet;
   getAnswerSet?: Maybe<Array<AnswerSet>>;
   getAnswerSetTeacher: Array<AnswerSet>;
+  getAnswerSetScore?: Maybe<Scalars['Int']>;
   getStudent?: Maybe<StudentData>;
 };
 
@@ -41,6 +42,11 @@ export type QueryGetAnswerSetArgs = {
 
 export type QueryGetAnswerSetTeacherArgs = {
   quizSetId: Scalars['Int'];
+};
+
+
+export type QueryGetAnswerSetScoreArgs = {
+  id: Scalars['Int'];
 };
 
 export type Quiz = {
@@ -90,7 +96,6 @@ export type AnswerSet = {
   quizSetId: Scalars['Float'];
   title: Scalars['String'];
   subject: Scalars['String'];
-  score?: Maybe<Scalars['String']>;
   answers?: Maybe<Array<Answer>>;
   student: Student;
   quizSet?: Maybe<QuizSet>;
@@ -312,7 +317,7 @@ export type GetAnswerSetQuery = (
   { __typename?: 'Query' }
   & { getAnswerSet?: Maybe<Array<(
     { __typename?: 'AnswerSet' }
-    & Pick<AnswerSet, 'studentId' | 'title' | 'subject' | 'score' | 'createdAt'>
+    & Pick<AnswerSet, 'studentId' | 'title' | 'subject' | 'createdAt'>
     & { answers?: Maybe<Array<(
       { __typename?: 'Answer' }
       & Pick<Answer, 'itemNumber' | 'isCorrect' | 'question' | 'answer'>
@@ -325,6 +330,16 @@ export type GetAnswerSetQuery = (
       )>> }
     )> }
   )>> }
+);
+
+export type GetAnswerSetScoreQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetAnswerSetScoreQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getAnswerSetScore'>
 );
 
 export type GetQuizSetMutationVariables = Exact<{
@@ -377,7 +392,7 @@ export type GetStudentQuery = (
       & Pick<Student, 'id' | 'email'>
     ), answerSets: Array<(
       { __typename?: 'AnswerSet' }
-      & Pick<AnswerSet, 'id' | 'studentId' | 'quizSetId' | 'title' | 'totalItems' | 'score' | 'subject'>
+      & Pick<AnswerSet, 'id' | 'studentId' | 'quizSetId' | 'title' | 'totalItems' | 'subject'>
       & { answers?: Maybe<Array<(
         { __typename?: 'Answer' }
         & Pick<Answer, 'answer' | 'isCorrect' | 'answerSetId' | 'itemNumber'>
@@ -590,7 +605,6 @@ export const GetAnswerSetDocument = gql`
     studentId
     title
     subject
-    score
     answers {
       itemNumber
       isCorrect
@@ -638,6 +652,39 @@ export function useGetAnswerSetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetAnswerSetQueryHookResult = ReturnType<typeof useGetAnswerSetQuery>;
 export type GetAnswerSetLazyQueryHookResult = ReturnType<typeof useGetAnswerSetLazyQuery>;
 export type GetAnswerSetQueryResult = Apollo.QueryResult<GetAnswerSetQuery, GetAnswerSetQueryVariables>;
+export const GetAnswerSetScoreDocument = gql`
+    query getAnswerSetScore($id: Int!) {
+  getAnswerSetScore(id: $id)
+}
+    `;
+
+/**
+ * __useGetAnswerSetScoreQuery__
+ *
+ * To run a query within a React component, call `useGetAnswerSetScoreQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAnswerSetScoreQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAnswerSetScoreQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetAnswerSetScoreQuery(baseOptions: Apollo.QueryHookOptions<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>(GetAnswerSetScoreDocument, options);
+      }
+export function useGetAnswerSetScoreLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>(GetAnswerSetScoreDocument, options);
+        }
+export type GetAnswerSetScoreQueryHookResult = ReturnType<typeof useGetAnswerSetScoreQuery>;
+export type GetAnswerSetScoreLazyQueryHookResult = ReturnType<typeof useGetAnswerSetScoreLazyQuery>;
+export type GetAnswerSetScoreQueryResult = Apollo.QueryResult<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>;
 export const GetQuizSetDocument = gql`
     mutation getQuizSet($quizSetCode: String!) {
   getQuizSet(quizSetCode: $quizSetCode) {
@@ -747,7 +794,6 @@ export const GetStudentDocument = gql`
       quizSetId
       title
       totalItems
-      score
       subject
       answers {
         answer

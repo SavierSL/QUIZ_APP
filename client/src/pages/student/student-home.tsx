@@ -15,6 +15,7 @@ import Quiz from "../../components/pageComponents/quiz";
 import { withApollo } from "../../utils/withApollo";
 import {
   useGetAnswerSetQuery,
+  useGetAnswerSetScoreQuery,
   useGetStudentQuery,
 } from "../../generated/graphql";
 import StudentQuizBox from "../../components/pageComponents/studentQuizBox";
@@ -41,6 +42,7 @@ const StudentHome: React.FC<AdminHomeProps> = () => {
       return "0px";
     }
   };
+
   return (
     <>
       <MainContainer>
@@ -66,11 +68,13 @@ const StudentHome: React.FC<AdminHomeProps> = () => {
                   );
                 })}
               </Flex>
-              {studentData?.getStudent ? (
-                <StudentQuizBox quiz={studentData?.getStudent?.answerSets} />
-              ) : (
-                ""
-              )}
+              {studentData?.getStudent
+                ? studentData?.getStudent?.answerSets.map((quizSet) => {
+                    return (
+                      <StudentQuizBox key={quizSet.id} quizSet={quizSet} />
+                    );
+                  })
+                : ""}
             </Wrapper>
           </Box>
         </Layout>

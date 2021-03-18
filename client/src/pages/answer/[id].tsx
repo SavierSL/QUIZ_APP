@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import {
   useGetQuizSetv2Query,
   useAnswerMutation,
+  useGetStudentQuery,
+  useGetAnswerSetScoreQuery,
 } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
+import { useApolloClient } from "@apollo/client";
 
 export interface AnswerProps {}
 
@@ -18,12 +21,17 @@ type Item = {
 };
 
 const Answer: React.FC<AnswerProps> = () => {
+  const apolloClient = useApolloClient();
+  const { refetch } = useGetStudentQuery();
+
   const [answer] = useAnswerMutation();
   const router = useRouter();
   const [items, setItems] = useState<Item[]>([]);
   const routerId =
     typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
-  console.log(routerId);
+  const { data, refetch: refetchScore } = useGetAnswerSetScoreQuery({
+    variables: { id: routerId },
+  });
   const { data: QuizSetData } = useGetQuizSetv2Query({
     variables: { id: routerId },
   });
@@ -125,6 +133,13 @@ const Answer: React.FC<AnswerProps> = () => {
         }}
       >
         Submit Answer
+      </Button>
+      <Button
+        onClick={() => {
+          refetchScore();
+        }}
+      >
+        back
       </Button>
     </>
   );

@@ -10,65 +10,46 @@ import {
 import { Box, Button, Text, Flex, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
+import { useGetAnswerSetScoreQuery } from "../../generated/graphql";
 
 export interface StudentQuizBoxProps {
-  quiz: ({
-    __typename?: "AnswerSet";
-  } & Pick<
+  quizSet: Pick<
     AnswerSet,
-    | "title"
-    | "id"
-    | "studentId"
-    | "totalItems"
-    | "subject"
-    | "score"
-    | "quizSetId"
-  > & {
-      answers?: ({
-        __typename?: "Answer";
-      } & Pick<
-        Answer,
-        "answer" | "isCorrect" | "answerSetId" | "itemNumber"
-      >)[];
-    })[];
+    "id" | "studentId" | "quizSetId" | "title" | "totalItems" | "subject"
+  >;
 }
 
-const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quiz }) => {
+const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quizSet }) => {
+  const { data: AnswerSetScoreData } = useGetAnswerSetScoreQuery({
+    variables: { id: quizSet.id },
+  });
   return (
     <>
-      <Box>
-        {quiz.map((quiz) => {
-          return (
-            //
-            <>
-              <Flex>
-                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
-                  <Text>{quiz.title}</Text>
-                </Box>
-                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
-                  <Text>{quiz.totalItems}</Text>
-                </Box>
-                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
-                  <Text>{quiz.subject}</Text>
-                </Box>
-                <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
-                  <Flex alignItems="center" justifyContent="center">
-                    <Text>{quiz.score ? quiz.score : "---"}</Text>
-                    <Button ml="1rem">
-                      <NextLink
-                        href="/answer/[id]"
-                        as={`/answer/${quiz.quizSetId}`}
-                      >
-                        Answer
-                      </NextLink>
-                    </Button>
-                  </Flex>
-                </Box>
-              </Flex>
-            </>
-          );
-        })}
-      </Box>
+      <Flex>
+        <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+          <Text>{quizSet.title}</Text>
+        </Box>
+        <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+          <Text>{quizSet.totalItems}</Text>
+        </Box>
+        <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+          <Text>{quizSet.subject}</Text>
+        </Box>
+        <Box mr=".1rem" p="1rem" width="30%" textAlign="center">
+          <Flex alignItems="center" justifyContent="center">
+            <Text>
+              {AnswerSetScoreData
+                ? AnswerSetScoreData?.getAnswerSetScore
+                : "---"}
+            </Text>
+            <Button ml="1rem">
+              <NextLink href="/answer/[id]" as={`/answer/${quizSet.quizSetId}`}>
+                Answer
+              </NextLink>
+            </Button>
+          </Flex>
+        </Box>
+      </Flex>
     </>
   );
 };

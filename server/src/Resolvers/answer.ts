@@ -18,12 +18,12 @@ export class AnswerResolver extends BaseEntity {
     @Ctx() { req }: MyContext
   ) {
     const question = await Quiz.findOne({ id: quizId });
-    let isCorrect: any = false;
+    let isCorrect: boolean = false;
     if (question?.answer === answer) {
       isCorrect = true;
     } //
     const getAnswerSet = await AnswerSet.findOne(
-      { quizSetId },
+      { quizSetId, studentId: req.session.userId },
       { relations: ["answers"] }
     );
     if (
@@ -41,6 +41,13 @@ export class AnswerResolver extends BaseEntity {
       answer,
       answerSetId: question?.quizSetId,
     }).save();
+    // let score: number;
+    // if (typeof getAnswerSet?.score !== "undefined") {
+    //   score = isCorrect ? getAnswerSet?.score + 1 : getAnswerSet?.score;
+    // } else {
+    //   score = getAnswerSet!.score;
+    // }
+
     return createAnswer;
   }
 
@@ -78,5 +85,18 @@ export class AnswerResolver extends BaseEntity {
       },
     });
     return getAnswerSets;
+  }
+  @Query(() => Int, { nullable: true })
+  async getAnswerSetScore(@Arg("id", () => Int) id: number) {
+    const getAnswerSet = await AnswerSet.findOne(
+      { id },
+      { relations: ["answers"] }
+    );
+
+    const score = getAnswerSet?.answers.reduce((score, answer) => {
+      answer ? score++ : score;
+      return score;
+    }, 0);
+    return score;
   }
 }

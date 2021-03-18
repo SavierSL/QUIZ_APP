@@ -52,9 +52,9 @@ const main = async () => {
   // await QuizSet.delete({});
   // await MultipleChoices.delete({}); //
   // await Quiz.delete({});
-  // await Answer.delete({}); //
-  // await AnswerSet.delete({});
-  // app // run again //
+  // await Answer.delete({}); //asd
+  // await AnswerSet.delete({}); safsaf asdsadsa dasdsad
+  // asdsad
   const app = express();
 
   // cookie

@@ -39,10 +39,6 @@ export class AnswerSet extends BaseEntity {
   @Column()
   subject!: string;
 
-  @Field(() => String, { nullable: true }) //
-  @Column({ nullable: true })
-  score!: string;
-
   @Field(() => [Answer], { nullable: true })
   @OneToMany(() => Answer, (answer) => answer.answerSet)
   answers: Answer[];

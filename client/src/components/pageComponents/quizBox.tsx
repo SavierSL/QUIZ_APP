@@ -5,6 +5,7 @@ import {
   useGetStudentQuery,
   GetQuizSetDocument,
   GetStudentDocument,
+  GetAnswerSetDocument,
 } from "../../generated/graphql";
 import { Box, Button, Text, Flex } from "@chakra-ui/react";
 

@@ -10,7 +10,7 @@ query getStudent {
       quizSetId
       title
       totalItems
-      score
+
       subject
       answers {
         answer

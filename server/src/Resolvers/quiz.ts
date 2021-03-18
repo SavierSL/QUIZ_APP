@@ -37,7 +37,12 @@ export class QuizResolver {
     const quiz = await QuizSet.findOne(
       { quizSetCode: quizSetCode },
       {
-        relations: ["answerSet", "answerSet.answers"],
+        relations: [
+          "answerSet",
+          "answerSet.answers",
+          "quizzes",
+          "quizzes.multipleChoices",
+        ],
       }
     );
     // const quiz = await getConnection().query(

@@ -3,7 +3,7 @@ query getAnswerSet($studentId: Int!) {
     studentId
     title
     subject
-    score
+ 
 
     answers {
       itemNumber

@@ -1,0 +1,3 @@
+query getAnswerSetScore($id: Int!) {
+  getAnswerSetScore(id: $id)
+}

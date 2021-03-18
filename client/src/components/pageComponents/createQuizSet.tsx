@@ -16,6 +16,7 @@ interface quizSetDataType {
   title: string;
   subject: string;
   quizSetId: number;
+  quizSetCode: string;
 }
 
 const CreateQuizSet: React.FC<CreateQuizProps> = () => {
@@ -35,6 +36,7 @@ const CreateQuizSet: React.FC<CreateQuizProps> = () => {
           <>
             <Text>{quizSetData.subject}</Text>
             <Text>{quizSetData.title}</Text>
+            <Text>{quizSetData.quizSetCode}</Text>
           </>
         ) : (
           <Box>
@@ -49,6 +51,7 @@ const CreateQuizSet: React.FC<CreateQuizProps> = () => {
                   title: data.data.createQuizSet.title,
                   subject: data.data.createQuizSet.subject,
                   quizSetId: data.data.createQuizSet.id,
+                  quizSetCode: data.data.createQuizSet.quizSetCode,
                 });
                 setIsSet(true);
               }}
