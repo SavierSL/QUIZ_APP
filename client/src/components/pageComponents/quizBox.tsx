@@ -10,6 +10,7 @@ import {
 import { Box, Button, Text, Flex } from "@chakra-ui/react";
 
 export interface QuizBoxProps {
+  added: boolean;
   quizSet: Pick<QuizSet, "title" | "id" | "quizSetCode" | "creatorId"> & {
     quizzes?: ({
       __typename?: "Quiz";
@@ -19,7 +20,7 @@ export interface QuizBoxProps {
     >)[];
   };
 }
-const QuizBox: React.FC<QuizBoxProps> = ({ quizSet }) => {
+const QuizBox: React.FC<QuizBoxProps> = ({ quizSet, added }) => {
   const [createAnswerSet] = useCreateAnswerSetMutation();
   return (
     <>
@@ -27,6 +28,7 @@ const QuizBox: React.FC<QuizBoxProps> = ({ quizSet }) => {
         <Flex justifyContent="space-between" alignItems="center">
           <Text>{quizSet.title}</Text>
           <Button
+            isDisabled={added}
             onClick={() => {
               createAnswerSet({
                 variables: { quizSetId: quizSet.id },
@@ -34,7 +36,7 @@ const QuizBox: React.FC<QuizBoxProps> = ({ quizSet }) => {
               });
             }}
           >
-            ADD
+            {`${added ? "ADDED" : "ADD"}`}
           </Button>
         </Flex>
       </Box>

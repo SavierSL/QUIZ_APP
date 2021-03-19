@@ -167,6 +167,7 @@ export class UserResolver {
       };
     }
     req.session.userId = user.id;
+    req.session.teacherId = -1;
     return {
       user,
     };
@@ -219,6 +220,7 @@ export class UserResolver {
         ],
       };
     }
+    req.session.userId = -1;
     req.session.teacherId = user.id;
     return {
       user,

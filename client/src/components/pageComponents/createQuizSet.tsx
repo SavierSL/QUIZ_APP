@@ -28,23 +28,29 @@ const CreateQuizSet: React.FC<CreateQuizProps> = () => {
   };
   const [createQuizSet] = useCreateQuizSetMutation();
   const [quizSetData, setQuizSetData] = useState<quizSetDataType>();
+  const [value1, setValue1] = React.useState("");
+  const handleChange1 = (event) => setValue1(event.target.value);
+  const [value2, setValue2] = React.useState("");
+  const handleChange2 = (event) => setValue2(event.target.value);
 
   return (
     <>
       <Flex flexDirection="column">
         {quizSetData ? (
           <>
-            <Text>{quizSetData.subject}</Text>
-            <Text>{quizSetData.title}</Text>
-            <Text>{quizSetData.quizSetCode}</Text>
+            <Text fontSize="2.2rem">{`Subject: ${quizSetData.subject}`}</Text>
+            <Text fontSize="2.2rem">{`Title: ${quizSetData.title}`}</Text>
+            <Text fontSize="2.2rem" color="violet">
+              {`Code: ${quizSetData.quizSetCode}`}
+            </Text>
           </>
         ) : (
           <Box>
             <Formik
-              initialValues={{ title: "", subject: "" }}
-              onSubmit={async ({ title, subject }) => {
+              initialValues={{ _: "" }}
+              onSubmit={async () => {
                 const data = await createQuizSet({
-                  variables: { title, subject },
+                  variables: { title: value1, subject: value2 },
                 });
                 console.log("submit");
                 setQuizSetData({
@@ -56,43 +62,60 @@ const CreateQuizSet: React.FC<CreateQuizProps> = () => {
                 setIsSet(true);
               }}
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, initialValues }) => (
                 <Form>
-                  <InputField name="title" placeholder="title" type="text" />
+                  <InputField
+                    value={value2}
+                    onChange={handleChange2}
+                    name="title"
+                    placeholder="title"
+                    type="text"
+                  />
                   <InputField
                     name="subject"
+                    value={value1}
+                    onChange={handleChange1}
                     placeholder="subject"
                     type="text"
                   />
-                  <Button type="submit">Create Quiz Set</Button>
+                  <Button
+                    isDisabled={value1 === "" || value2 === "" ? true : false}
+                    type="submit"
+                  >
+                    Create Quiz Set
+                  </Button>
                 </Form>
               )}
             </Formik>
           </Box>
         )}
-
-        {isSet ? (
-          <>
-            <Text>Make Questions</Text>
-            {itemNumbers.map((itemNum) => {
-              return (
-                <MakeQuiz
-                  itemNumber={itemNum}
-                  quizSetId={quizSetData.quizSetId}
-                />
-              );
-            })}
-            <Button
-              onClick={() => {
-                addMoreQuiz();
-              }}
-            >
-              Add more
-            </Button>
-          </>
-        ) : (
-          ""
-        )}
+        <Box mt="1rem">
+          {isSet ? (
+            <>
+              <Text fontSize="2.2rem" fontWeight={700} mb="1rem">
+                Make Questions
+              </Text>
+              {itemNumbers.map((itemNum) => {
+                return (
+                  <MakeQuiz
+                    itemNumber={itemNum}
+                    quizSetId={quizSetData.quizSetId}
+                  />
+                );
+              })}
+            </>
+          ) : (
+            ""
+          )}
+        </Box>
+        <Button
+          mt="1rem"
+          onClick={() => {
+            addMoreQuiz();
+          }}
+        >
+          Add more question
+        </Button>
       </Flex>
     </>
   );

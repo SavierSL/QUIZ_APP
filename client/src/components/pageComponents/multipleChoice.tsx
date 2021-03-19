@@ -26,6 +26,7 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
   const [letterContentInput, setLetterContentInput] = useState<any>({
     letterContent: "",
   });
+
   const submitMultipleChoice = async () => {
     console.log(letterContentInput.letterContent);
     const letterData = await createMultipleChoice({
@@ -57,7 +58,6 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           <Text mr="1rem">{`${letter}.`}</Text>
           <Input
             name="letterContent"
-            value={letterContentInput.letterContent}
             onChange={(e) => {
               handleLetterContentInput(e);
             }}
@@ -65,6 +65,8 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
             type="text"
           />
           <Button
+            value={letterContentInput.letterContent}
+            isDisabled={letterContentInput.letterContent === "" ? true : false}
             onClick={() => {
               submitMultipleChoice();
             }}

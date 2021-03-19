@@ -39,14 +39,24 @@ const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quizSet }) => {
           <Flex alignItems="center" justifyContent="center">
             <Text>
               {AnswerSetScoreData
-                ? AnswerSetScoreData?.getAnswerSetScore
+                ? AnswerSetScoreData?.getAnswerSetScore === 0
+                  ? "---"
+                  : AnswerSetScoreData?.getAnswerSetScore
                 : "---"}
             </Text>
-            <Button ml="1rem">
-              <NextLink href="/answer/[id]" as={`/answer/${quizSet.quizSetId}`}>
-                Answer
-              </NextLink>
-            </Button>
+
+            {AnswerSetScoreData?.getAnswerSetScore !== 0 ? (
+              <></>
+            ) : (
+              <Button ml="1rem">
+                <NextLink
+                  href="/answer/[id]"
+                  as={`/answer/${quizSet.quizSetId}`}
+                >
+                  Answer
+                </NextLink>
+              </Button>
+            )}
           </Flex>
         </Box>
       </Flex>

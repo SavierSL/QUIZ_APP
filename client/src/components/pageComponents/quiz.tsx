@@ -6,13 +6,23 @@ import Layout from "../layout";
 import MainContainer from "../MainContainer";
 import QuizBox from "./quizBox";
 import Wrapper from "../wrapper";
-import { useGetQuizSetMutation } from "../../generated/graphql";
+import {
+  useGetQuizSetMutation,
+  useGetStudentQuery,
+} from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
 
 export interface QuizProps {}
 
 const Quiz: React.FC<QuizProps> = () => {
+  const { data: studentData } = useGetStudentQuery();
   const [getQuizSet, { data: quizSetData }] = useGetQuizSetMutation();
+  const isAdded = studentData?.getStudent?.answerSets.filter((answerSet) => {
+    return answerSet.id === quizSetData?.getQuizSet.id;
+  });
+  console.log(isAdded?.length != 0);
+  console.log(isAdded);
+  const added = isAdded?.length != 0;
   return (
     <>
       <Wrapper variant="regular">
@@ -44,7 +54,7 @@ const Quiz: React.FC<QuizProps> = () => {
           </Formik>
         </Box>
         {quizSetData?.getQuizSet ? (
-          <QuizBox quizSet={quizSetData?.getQuizSet} />
+          <QuizBox quizSet={quizSetData?.getQuizSet} added={added} />
         ) : (
           ""
         )}

@@ -21,6 +21,7 @@ export type Query = {
   getAnswerSet?: Maybe<Array<AnswerSet>>;
   getAnswerSetTeacher: Array<AnswerSet>;
   getAnswerSetScore?: Maybe<Scalars['Int']>;
+  getAnswerSetv2: AnswerSet;
   getStudent?: Maybe<StudentData>;
 };
 
@@ -46,6 +47,11 @@ export type QueryGetAnswerSetTeacherArgs = {
 
 
 export type QueryGetAnswerSetScoreArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryGetAnswerSetv2Args = {
   id: Scalars['Int'];
 };
 
@@ -340,6 +346,33 @@ export type GetAnswerSetScoreQueryVariables = Exact<{
 export type GetAnswerSetScoreQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'getAnswerSetScore'>
+);
+
+export type GetAnswerSetv2QueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetAnswerSetv2Query = (
+  { __typename?: 'Query' }
+  & { getAnswerSetv2: (
+    { __typename?: 'AnswerSet' }
+    & Pick<AnswerSet, 'title' | 'subject' | 'id'>
+    & { answers?: Maybe<Array<(
+      { __typename?: 'Answer' }
+      & Pick<Answer, 'studentId' | 'id' | 'itemNumber' | 'answerSetId' | 'question' | 'answer' | 'isCorrect'>
+    )>>, quizSet?: Maybe<(
+      { __typename?: 'QuizSet' }
+      & { quizzes?: Maybe<Array<(
+        { __typename?: 'Quiz' }
+        & Pick<Quiz, 'itemNumber' | 'question' | 'answer'>
+        & { multipleChoices?: Maybe<Array<(
+          { __typename?: 'MultipleChoices' }
+          & Pick<MultipleChoices, 'letterItem' | 'letterContent'>
+        )>> }
+      )>> }
+    )> }
+  ) }
 );
 
 export type GetQuizSetMutationVariables = Exact<{
@@ -685,6 +718,63 @@ export function useGetAnswerSetScoreLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetAnswerSetScoreQueryHookResult = ReturnType<typeof useGetAnswerSetScoreQuery>;
 export type GetAnswerSetScoreLazyQueryHookResult = ReturnType<typeof useGetAnswerSetScoreLazyQuery>;
 export type GetAnswerSetScoreQueryResult = Apollo.QueryResult<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>;
+export const GetAnswerSetv2Document = gql`
+    query getAnswerSetv2($id: Int!) {
+  getAnswerSetv2(id: $id) {
+    title
+    subject
+    id
+    answers {
+      studentId
+      id
+      itemNumber
+      answerSetId
+      question
+      answer
+      isCorrect
+    }
+    quizSet {
+      quizzes {
+        itemNumber
+        question
+        answer
+        multipleChoices {
+          letterItem
+          letterContent
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAnswerSetv2Query__
+ *
+ * To run a query within a React component, call `useGetAnswerSetv2Query` and pass it any options that fit your needs.
+ * When your component renders, `useGetAnswerSetv2Query` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAnswerSetv2Query({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetAnswerSetv2Query(baseOptions: Apollo.QueryHookOptions<GetAnswerSetv2Query, GetAnswerSetv2QueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAnswerSetv2Query, GetAnswerSetv2QueryVariables>(GetAnswerSetv2Document, options);
+      }
+export function useGetAnswerSetv2LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAnswerSetv2Query, GetAnswerSetv2QueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAnswerSetv2Query, GetAnswerSetv2QueryVariables>(GetAnswerSetv2Document, options);
+        }
+export type GetAnswerSetv2QueryHookResult = ReturnType<typeof useGetAnswerSetv2Query>;
+export type GetAnswerSetv2LazyQueryHookResult = ReturnType<typeof useGetAnswerSetv2LazyQuery>;
+export type GetAnswerSetv2QueryResult = Apollo.QueryResult<GetAnswerSetv2Query, GetAnswerSetv2QueryVariables>;
 export const GetQuizSetDocument = gql`
     mutation getQuizSet($quizSetCode: String!) {
   getQuizSet(quizSetCode: $quizSetCode) {

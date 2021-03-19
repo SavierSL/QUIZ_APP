@@ -56,6 +56,13 @@ export class AnswerResolver extends BaseEntity {
     @Arg("quizSetId", () => Int) quizSetId: number,
     @Ctx() { req }: MyContext
   ) {
+    const findAnswerSet = await AnswerSet.findOne({
+      quizSetId,
+      studentId: req.session.userId,
+    });
+    if (findAnswerSet) {
+      return;
+    }
     console.log(`session ID ${req.session.userId}`);
     const quizSet = await QuizSet.findOne({ id: quizSetId });
     const getAnswerSet = await AnswerSet.create({
@@ -94,9 +101,28 @@ export class AnswerResolver extends BaseEntity {
     );
 
     const score = getAnswerSet?.answers.reduce((score, answer) => {
-      answer ? score++ : score;
+      answer.isCorrect ? score++ : score;
       return score;
     }, 0);
     return score;
+  }
+
+  @Query(() => AnswerSet)
+  async getAnswerSetv2(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ) {
+    const getAnswerSet = await AnswerSet.findOne(
+      { id, studentId: req.session.userId },
+      {
+        relations: [
+          "answers",
+          "quizSet",
+          "quizSet.quizzes",
+          "quizSet.quizzes.multipleChoices",
+        ],
+      }
+    );
+    return getAnswerSet;
   }
 }

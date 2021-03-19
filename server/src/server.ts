@@ -54,7 +54,7 @@ const main = async () => {
   // await Quiz.delete({});
   // await Answer.delete({}); //asd
   // await AnswerSet.delete({}); safsaf asdsadsa dasdsad
-  // asdsad
+  // asdsad asdsadasdsadsadsadsad  sadsad
   const app = express();
 
   // cookie
@@ -101,7 +101,7 @@ const main = async () => {
     context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
 
-  //to create a graphql endpoint for us on express
+  //to create a graphql endpoint for us on express asdsad
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(5001, () => {

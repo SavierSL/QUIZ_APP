@@ -71,7 +71,20 @@ const StudentHome: React.FC<AdminHomeProps> = () => {
               {studentData?.getStudent
                 ? studentData?.getStudent?.answerSets.map((quizSet) => {
                     return (
-                      <StudentQuizBox key={quizSet.id} quizSet={quizSet} />
+                      <NextLink
+                        href="/answer-set/[id]"
+                        as={`/answer-set/${quizSet.quizSetId}`}
+                      >
+                        <Box
+                          _hover={{ bg: "gray" }}
+                          cursor="pointer"
+                          rounded="md"
+                          mt=".5rem"
+                          style={{ transition: "all .5s" }}
+                        >
+                          <StudentQuizBox key={quizSet.id} quizSet={quizSet} />
+                        </Box>
+                      </NextLink>
                     );
                   })
                 : ""}

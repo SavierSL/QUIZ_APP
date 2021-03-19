@@ -19,7 +19,7 @@ const theme = extendTheme({
         padding: "0",
         fontSize: "15px",
         fontWeight: "400",
-        lineHeight: "1.8",
+        lineHeight: "1.1",
 
         "&::-webkit-scrollbar": {
           width: ".5rem",

@@ -21,6 +21,8 @@ type Item = {
 };
 
 const Answer: React.FC<AnswerProps> = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDoneSubmitting, setIsDoneSubmitting] = useState(false);
   const apolloClient = useApolloClient();
   const { refetch } = useGetStudentQuery();
 
@@ -49,8 +51,8 @@ const Answer: React.FC<AnswerProps> = () => {
   };
   console.log(QuizSetData);
   console.log(items);
-  const submitAnswer = (item: Item) => {
-    answer({
+  const submitAnswer = async (item: Item) => {
+    await answer({
       variables: {
         answer: item.answer,
         quizId: item.quizId,
@@ -73,49 +75,58 @@ const Answer: React.FC<AnswerProps> = () => {
                     <Text>{`${quiz.itemNumber}. ${quiz.question}`}</Text>
                   </Box>
                   <Flex flexDirection="row">
-                    {quiz.multipleChoices.map((choice) => {
-                      return (
-                        <>
-                          <Box mr="1rem">
-                            <Flex flexDirection="row">
-                              <Checkbox
-                                isChecked={isInItems(choice.id, quiz.id)}
-                                onChange={() => {
-                                  if (isInItems(choice.id, quiz.id)) {
-                                    console.log("true");
-                                    const newItems = items.filter((item) => {
-                                      return (
-                                        item.choiceId !== choice.id ||
-                                        item.quizId !== quiz.id
-                                      );
-                                    });
-                                    console.log(newItems);
-                                    setItems(newItems);
-                                  } else {
-                                    const newItems = items.filter((item) => {
-                                      return item.quizId !== quiz.id;
-                                    });
-                                    setItems([
-                                      ...newItems,
-                                      {
-                                        itemNumber: quiz.itemNumber,
-                                        choiceId: choice.id,
-                                        quizId: quiz.id,
-                                        answer: choice.letterContent,
-                                        quizSetId: quiz.quizSetId,
-                                      },
-                                    ]);
-                                  }
-                                }}
-                              >
-                                {choice.letterItem}
-                              </Checkbox>
-                              <Text>{choice.letterContent}</Text>
-                            </Flex>
-                          </Box>
-                        </>
-                      );
-                    })}
+                    {quiz.multipleChoices
+                      // ERROR Cannot assign to read only property '0' of object '[object Array]'
+                      //Because the array is frozen in strict mode, you'll need to copy the array before sorting it: by adding a slice
+                      .slice()
+                      .sort((a, b) => {
+                        var textA = a.letterItem.toUpperCase();
+                        var textB = b.letterItem.toUpperCase();
+                        return textA < textB ? -1 : textA > textB ? 1 : 0;
+                      })
+                      .map((choice) => {
+                        return (
+                          <>
+                            <Box mr="1rem">
+                              <Flex flexDirection="row">
+                                <Checkbox
+                                  isChecked={isInItems(choice.id, quiz.id)}
+                                  onChange={() => {
+                                    if (isInItems(choice.id, quiz.id)) {
+                                      console.log("true");
+                                      const newItems = items.filter((item) => {
+                                        return (
+                                          item.choiceId !== choice.id ||
+                                          item.quizId !== quiz.id
+                                        );
+                                      });
+                                      console.log(newItems);
+                                      setItems(newItems);
+                                    } else {
+                                      const newItems = items.filter((item) => {
+                                        return item.quizId !== quiz.id;
+                                      });
+                                      setItems([
+                                        ...newItems,
+                                        {
+                                          itemNumber: quiz.itemNumber,
+                                          choiceId: choice.id,
+                                          quizId: quiz.id,
+                                          answer: choice.letterContent,
+                                          quizSetId: quiz.quizSetId,
+                                        },
+                                      ]);
+                                    }
+                                  }}
+                                >
+                                  {choice.letterItem}
+                                </Checkbox>
+                                <Text>{choice.letterContent}</Text>
+                              </Flex>
+                            </Box>
+                          </>
+                        );
+                      })}
                   </Flex>
                 </Flex>
               </>
@@ -125,22 +136,31 @@ const Answer: React.FC<AnswerProps> = () => {
       ) : (
         ""
       )}
-      <Button
-        onClick={() => {
-          items.map((item) => {
-            submitAnswer(item);
-          });
-        }}
-      >
-        Submit Answer
-      </Button>
-      <Button
-        onClick={() => {
-          refetchScore();
-        }}
-      >
-        back
-      </Button>
+      {isSubmitted && !isDoneSubmitting ? (
+        <Button
+          onClick={() => {
+            refetchScore();
+          }}
+        >
+          back
+        </Button>
+      ) : (
+        <Button
+          isLoading={isDoneSubmitting}
+          onClick={() => {
+            setIsDoneSubmitting(true);
+            items.map(async (item, index) => {
+              await submitAnswer(item);
+              if (item === items[index]) {
+                setIsDoneSubmitting(false);
+                setIsSubmitted(true);
+              }
+            });
+          }}
+        >
+          Submit Answer
+        </Button>
+      )}
     </>
   );
 };
