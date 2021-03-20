@@ -18,6 +18,7 @@ export type Query = {
   __typename?: 'Query';
   getQuiz?: Maybe<Quiz>;
   getQuizSetv2: QuizSet;
+  getTeachersQuizSet: Array<QuizSet>;
   getAnswerSet?: Maybe<Array<AnswerSet>>;
   getAnswerSetTeacher: Array<AnswerSet>;
   getAnswerSetScore?: Maybe<Scalars['Int']>;
@@ -33,11 +34,6 @@ export type QueryGetQuizArgs = {
 
 export type QueryGetQuizSetv2Args = {
   id: Scalars['Int'];
-};
-
-
-export type QueryGetAnswerSetArgs = {
-  studentId: Scalars['Int'];
 };
 
 
@@ -79,7 +75,7 @@ export type QuizSet = {
   subject: Scalars['String'];
   quizzes?: Maybe<Array<Quiz>>;
   creator: Teacher;
-  answerSet?: Maybe<AnswerSet>;
+  answerSet?: Maybe<Array<AnswerSet>>;
   totalItems?: Maybe<Scalars['Int']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -314,16 +310,14 @@ export type CreateQuizSetMutation = (
   ) }
 );
 
-export type GetAnswerSetQueryVariables = Exact<{
-  studentId: Scalars['Int'];
-}>;
+export type GetAnswerSetQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetAnswerSetQuery = (
   { __typename?: 'Query' }
   & { getAnswerSet?: Maybe<Array<(
     { __typename?: 'AnswerSet' }
-    & Pick<AnswerSet, 'studentId' | 'title' | 'subject' | 'createdAt'>
+    & Pick<AnswerSet, 'id' | 'studentId' | 'quizSetId' | 'title' | 'subject' | 'createdAt'>
     & { answers?: Maybe<Array<(
       { __typename?: 'Answer' }
       & Pick<Answer, 'itemNumber' | 'isCorrect' | 'question' | 'answer'>
@@ -431,6 +425,25 @@ export type GetStudentQuery = (
         & Pick<Answer, 'answer' | 'isCorrect' | 'answerSetId' | 'itemNumber'>
       )>> }
     )> }
+  )> }
+);
+
+export type GetTeachersQuizSetQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTeachersQuizSetQuery = (
+  { __typename?: 'Query' }
+  & { getTeachersQuizSet: Array<(
+    { __typename?: 'QuizSet' }
+    & Pick<QuizSet, 'id' | 'quizSetCode' | 'subject' | 'title' | 'creatorId' | 'totalItems' | 'createdAt'>
+    & { answerSet?: Maybe<Array<(
+      { __typename?: 'AnswerSet' }
+      & Pick<AnswerSet, 'id' | 'studentId' | 'title' | 'subject'>
+      & { answers?: Maybe<Array<(
+        { __typename?: 'Answer' }
+        & Pick<Answer, 'itemNumber' | 'isCorrect' | 'answer'>
+      )>> }
+    )>> }
   )> }
 );
 
@@ -633,9 +646,11 @@ export type CreateQuizSetMutationHookResult = ReturnType<typeof useCreateQuizSet
 export type CreateQuizSetMutationResult = Apollo.MutationResult<CreateQuizSetMutation>;
 export type CreateQuizSetMutationOptions = Apollo.BaseMutationOptions<CreateQuizSetMutation, CreateQuizSetMutationVariables>;
 export const GetAnswerSetDocument = gql`
-    query getAnswerSet($studentId: Int!) {
-  getAnswerSet(studentId: $studentId) {
+    query getAnswerSet {
+  getAnswerSet {
+    id
     studentId
+    quizSetId
     title
     subject
     answers {
@@ -670,11 +685,10 @@ export const GetAnswerSetDocument = gql`
  * @example
  * const { data, loading, error } = useGetAnswerSetQuery({
  *   variables: {
- *      studentId: // value for 'studentId'
  *   },
  * });
  */
-export function useGetAnswerSetQuery(baseOptions: Apollo.QueryHookOptions<GetAnswerSetQuery, GetAnswerSetQueryVariables>) {
+export function useGetAnswerSetQuery(baseOptions?: Apollo.QueryHookOptions<GetAnswerSetQuery, GetAnswerSetQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAnswerSetQuery, GetAnswerSetQueryVariables>(GetAnswerSetDocument, options);
       }
@@ -922,6 +936,57 @@ export function useGetStudentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetStudentQueryHookResult = ReturnType<typeof useGetStudentQuery>;
 export type GetStudentLazyQueryHookResult = ReturnType<typeof useGetStudentLazyQuery>;
 export type GetStudentQueryResult = Apollo.QueryResult<GetStudentQuery, GetStudentQueryVariables>;
+export const GetTeachersQuizSetDocument = gql`
+    query getTeachersQuizSet {
+  getTeachersQuizSet {
+    id
+    quizSetCode
+    subject
+    title
+    creatorId
+    totalItems
+    createdAt
+    answerSet {
+      id
+      studentId
+      title
+      subject
+      answers {
+        itemNumber
+        isCorrect
+        answer
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTeachersQuizSetQuery__
+ *
+ * To run a query within a React component, call `useGetTeachersQuizSetQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTeachersQuizSetQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTeachersQuizSetQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTeachersQuizSetQuery(baseOptions?: Apollo.QueryHookOptions<GetTeachersQuizSetQuery, GetTeachersQuizSetQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTeachersQuizSetQuery, GetTeachersQuizSetQueryVariables>(GetTeachersQuizSetDocument, options);
+      }
+export function useGetTeachersQuizSetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTeachersQuizSetQuery, GetTeachersQuizSetQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTeachersQuizSetQuery, GetTeachersQuizSetQueryVariables>(GetTeachersQuizSetDocument, options);
+        }
+export type GetTeachersQuizSetQueryHookResult = ReturnType<typeof useGetTeachersQuizSetQuery>;
+export type GetTeachersQuizSetLazyQueryHookResult = ReturnType<typeof useGetTeachersQuizSetLazyQuery>;
+export type GetTeachersQuizSetQueryResult = Apollo.QueryResult<GetTeachersQuizSetQuery, GetTeachersQuizSetQueryVariables>;
 export const MakeQuizDocument = gql`
     mutation makeQuiz($question: String!, $itemNumber: Int!, $answer: String!, $quizSetId: Int!) {
   makeQuiz(

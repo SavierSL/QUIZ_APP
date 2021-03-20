@@ -2,6 +2,7 @@ import { Box, Text, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import {
+  useGetAnswerSetQuery,
   useGetAnswerSetScoreQuery,
   useGetAnswerSetv2Query,
 } from "../../generated/graphql";
@@ -16,8 +17,15 @@ const AnswerSetMultipleChoice: React.FC<AnswerSetMultipleChoiceProps> = ({
   const { data: GetAnswerSetData } = useGetAnswerSetv2Query({
     variables: { id: id },
   });
+  // const { data: AnwerSetData } = useGetAnswerSetQuery();
+  // const getAnswerSetSameAsQuizSet = AnwerSetData?.getAnswerSet.filter(
+  //   (answerSet) => {
+  //     return answerSet.id === id;
+  //   }
+  // );
+  // console.log(getAnswerSetSameAsQuizSet);
   const { data: scoreData } = useGetAnswerSetScoreQuery({
-    variables: { id: id },
+    variables: { id: GetAnswerSetData?.getAnswerSetv2.id },
   });
   //   const quizSets = [];
   //   const sortedChoice = GetAnswerSetData?.getAnswerSetv2.quizSet.quizzes.map(
@@ -33,6 +41,7 @@ const AnswerSetMultipleChoice: React.FC<AnswerSetMultipleChoiceProps> = ({
   //        return;
   //      })
   //  })
+
   return (
     <>
       <Text
@@ -67,7 +76,7 @@ const AnswerSetMultipleChoice: React.FC<AnswerSetMultipleChoiceProps> = ({
                             color={
                               findAnswer.answer === choice.letterContent
                                 ? "red"
-                                : "black"
+                                : ""
                             }
                           >{`${choice.letterItem}. ${choice.letterContent}`}</Text>
                         </>

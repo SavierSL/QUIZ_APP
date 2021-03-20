@@ -1,0 +1,22 @@
+query getTeachersQuizSet {
+  getTeachersQuizSet {
+    id
+    quizSetCode
+    subject
+    title
+    creatorId
+    totalItems
+    createdAt
+    answerSet {
+      id
+      studentId
+      title
+      subject
+      answers {
+        itemNumber
+        isCorrect
+        answer
+      }
+    }
+  }
+}

@@ -51,10 +51,10 @@ const main = async () => {
   });
   // await QuizSet.delete({});
   // await MultipleChoices.delete({}); //
-  // await Quiz.delete({});
-  // await Answer.delete({}); //asd
-  // await AnswerSet.delete({}); safsaf asdsadsa dasdsad
-  // asdsad asdsadasdsadsadsadsad  sadsad
+  // await Quiz.delete({});dsa
+  // await Answer.delete({}); //asdasds
+  // await AnswerSet.delete({}); safsafadsdasdasd sad asdasd asdsadasd sa
+  // asdsad asdsadasdsa dadasd
   const app = express();
 
   // cookie
@@ -80,7 +80,7 @@ const main = async () => {
         secure: !__prod__, //cookie only works in https
         sameSite: "lax", //csrf
       },
-      saveUninitialized: true, //it will create a session by default turn it to false so we can add
+      saveUninitialized: false, //it will create a session by default turn it to false so we can add
       secret: "asfasfasfasfasfacWTGSD",
       resave: false,
     })
@@ -101,7 +101,7 @@ const main = async () => {
     context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
 
-  //to create a graphql endpoint for us on express asdsad
+  //to create a graphql endpoint for us on express asdsaddads
   apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(5001, () => {

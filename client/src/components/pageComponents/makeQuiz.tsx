@@ -3,7 +3,10 @@ import { Form, Formik } from "formik";
 import React, { useState } from "react";
 import Wrapper from "../wrapper";
 import InputField from "../inputFIeld";
-import { useMakeQuizMutation } from "../../generated/graphql";
+import {
+  useMakeQuizMutation,
+  useGetTeachersQuizSetQuery,
+} from "../../generated/graphql";
 import MultipleChoice from "./multipleChoice";
 export interface MakeQuizProps {
   itemNumber: number;
@@ -25,6 +28,7 @@ const MakeQuiz: React.FC<MakeQuizProps> = ({ itemNumber, quizSetId }) => {
   const handleChange1 = (event) => setValue1(event.target.value);
   const [value2, setValue2] = React.useState("");
   const handleChange2 = (event) => setValue2(event.target.value);
+  const { refetch: refetchTeachersData } = useGetTeachersQuizSetQuery();
 
   //     @Arg("question") question: string,
   // @Arg("itemNumber") itemNumber: number,
@@ -64,6 +68,7 @@ const MakeQuiz: React.FC<MakeQuizProps> = ({ itemNumber, quizSetId }) => {
               itemNumberQ: questionData.data.makeQuiz.itemNumber,
             });
             setIsSetQuestion(true);
+            refetchTeachersData();
           }}
         >
           {({ isSubmitting }) => (

@@ -39,7 +39,7 @@ export class AnswerResolver extends BaseEntity {
       itemNumber,
       question: question?.question,
       answer,
-      answerSetId: question?.quizSetId,
+      answerSetId: getAnswerSet?.quizSetId,
     }).save();
     // let score: number;
     // if (typeof getAnswerSet?.score !== "undefined") {
@@ -65,20 +65,20 @@ export class AnswerResolver extends BaseEntity {
     }
     console.log(`session ID ${req.session.userId}`);
     const quizSet = await QuizSet.findOne({ id: quizSetId });
-    const getAnswerSet = await AnswerSet.create({
+    const createAnswerSet = await AnswerSet.create({
       quizSetId,
       studentId: req.session.userId,
       title: quizSet?.title,
       totalItems: quizSet?.totalItems,
       subject: quizSet?.subject,
     }).save();
-    return getAnswerSet;
+    return createAnswerSet;
   }
 
   @Query(() => [AnswerSet], { nullable: true })
-  async getAnswerSet(@Arg("studentId", () => Int) studentId: number) {
+  async getAnswerSet(@Ctx() { req }: MyContext) {
     const getAnswerSet = await AnswerSet.find({
-      where: { studentId },
+      where: { studentId: req.session.userId },
       relations: ["answers"],
     });
     return getAnswerSet;
@@ -94,9 +94,12 @@ export class AnswerResolver extends BaseEntity {
     return getAnswerSets;
   }
   @Query(() => Int, { nullable: true })
-  async getAnswerSetScore(@Arg("id", () => Int) id: number) {
+  async getAnswerSetScore(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ) {
     const getAnswerSet = await AnswerSet.findOne(
-      { id },
+      { id, studentId: req.session.userId },
       { relations: ["answers"] }
     );
 
@@ -113,7 +116,7 @@ export class AnswerResolver extends BaseEntity {
     @Ctx() { req }: MyContext
   ) {
     const getAnswerSet = await AnswerSet.findOne(
-      { id, studentId: req.session.userId },
+      { quizSetId: id, studentId: req.session.userId },
       {
         relations: [
           "answers",

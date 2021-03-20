@@ -1,6 +1,8 @@
-query getAnswerSet($studentId: Int!) {
-  getAnswerSet(studentId: $studentId) {
+query getAnswerSet {
+  getAnswerSet {
+    id
     studentId
+    quizSetId
     title
     subject
     answers {

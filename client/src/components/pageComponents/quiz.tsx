@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import InputField from "../inputFIeld";
 import Layout from "../layout";
 import MainContainer from "../MainContainer";
@@ -17,8 +17,9 @@ export interface QuizProps {}
 const Quiz: React.FC<QuizProps> = () => {
   const { data: studentData } = useGetStudentQuery();
   const [getQuizSet, { data: quizSetData }] = useGetQuizSetMutation();
+  const [quizSetDataID, setQuizSetDataID] = useState<number>();
   const isAdded = studentData?.getStudent?.answerSets.filter((answerSet) => {
-    return answerSet.id === quizSetData?.getQuizSet.id;
+    return answerSet.quizSetId === quizSetDataID;
   });
   console.log(isAdded?.length != 0);
   console.log(isAdded);
@@ -31,7 +32,9 @@ const Quiz: React.FC<QuizProps> = () => {
             initialValues={{ quizSetCode: "" }}
             onSubmit={async ({ quizSetCode }) => {
               console.log(quizSetCode);
+              //we should get the answer set ID for the answer button
               const data = await getQuizSet({ variables: { quizSetCode } });
+              setQuizSetDataID(data.data.getQuizSet.id);
               console.log(data);
             }}
           >

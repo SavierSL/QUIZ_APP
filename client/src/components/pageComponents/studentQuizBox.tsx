@@ -6,11 +6,13 @@ import {
   AnswerSet,
   Student,
   Answer,
+  useGetAnswerSetQuery,
 } from "../../generated/graphql";
 import { Box, Button, Text, Flex, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import { useGetAnswerSetScoreQuery } from "../../generated/graphql";
+import { useRouter } from "next/dist/client/router";
 
 export interface StudentQuizBoxProps {
   quizSet: Pick<
@@ -20,9 +22,21 @@ export interface StudentQuizBoxProps {
 }
 
 const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quizSet }) => {
+  const router = useRouter();
+  const routerId =
+    typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
+
+  const { data: AnwerSetData } = useGetAnswerSetQuery();
+
+  const getAnswerSetSameAsQuizSet = AnwerSetData?.getAnswerSet.filter(
+    (answerSet) => {
+      return answerSet.id === quizSet.id;
+    }
+  );
   const { data: AnswerSetScoreData } = useGetAnswerSetScoreQuery({
-    variables: { id: quizSet.id },
+    variables: { id: getAnswerSetSameAsQuizSet[0]?.id },
   });
+  console.log(AnswerSetScoreData);
   return (
     <>
       <Flex>

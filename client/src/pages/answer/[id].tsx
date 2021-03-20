@@ -9,6 +9,10 @@ import {
 } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
 import { useApolloClient } from "@apollo/client";
+import MainContainer from "../../components/MainContainer";
+import Layout from "../../components/layout";
+import Wrapper from "../../components/wrapper";
+import NextLink from "next/link";
 
 export interface AnswerProps {}
 
@@ -63,104 +67,154 @@ const Answer: React.FC<AnswerProps> = () => {
   };
   return (
     <>
-      <Text>{QuizSetData?.getQuizSetv2.subject}</Text>
-      <Text>{QuizSetData?.getQuizSetv2.title}</Text>
-      {QuizSetData?.getQuizSetv2 ? (
-        <>
-          {QuizSetData?.getQuizSetv2.quizzes.map((quiz) => {
-            return (
-              <>
-                <Flex flexDirection="column">
-                  <Box>
-                    <Text>{`${quiz.itemNumber}. ${quiz.question}`}</Text>
-                  </Box>
-                  <Flex flexDirection="row">
-                    {quiz.multipleChoices
-                      // ERROR Cannot assign to read only property '0' of object '[object Array]'
-                      //Because the array is frozen in strict mode, you'll need to copy the array before sorting it: by adding a slice
-                      .slice()
-                      .sort((a, b) => {
-                        var textA = a.letterItem.toUpperCase();
-                        var textB = b.letterItem.toUpperCase();
-                        return textA < textB ? -1 : textA > textB ? 1 : 0;
-                      })
-                      .map((choice) => {
-                        return (
-                          <>
-                            <Box mr="1rem">
-                              <Flex flexDirection="row">
-                                <Checkbox
-                                  isChecked={isInItems(choice.id, quiz.id)}
-                                  onChange={() => {
-                                    if (isInItems(choice.id, quiz.id)) {
-                                      console.log("true");
-                                      const newItems = items.filter((item) => {
-                                        return (
-                                          item.choiceId !== choice.id ||
-                                          item.quizId !== quiz.id
-                                        );
-                                      });
-                                      console.log(newItems);
-                                      setItems(newItems);
-                                    } else {
-                                      const newItems = items.filter((item) => {
-                                        return item.quizId !== quiz.id;
-                                      });
-                                      setItems([
-                                        ...newItems,
-                                        {
-                                          itemNumber: quiz.itemNumber,
-                                          choiceId: choice.id,
-                                          quizId: quiz.id,
-                                          answer: choice.letterContent,
-                                          quizSetId: quiz.quizSetId,
-                                        },
-                                      ]);
-                                    }
-                                  }}
-                                >
-                                  {choice.letterItem}
-                                </Checkbox>
-                                <Text>{choice.letterContent}</Text>
-                              </Flex>
+      <MainContainer>
+        <Layout withNav={true}>
+          <Wrapper variant="large">
+            <Box minHeight="100vh" bg="blackAlpha.200" p="5rem">
+              <Box mb="1rem">
+                <Text fontSize="1.5rem">
+                  {`Title: ${QuizSetData?.getQuizSetv2.title}`}
+                </Text>
+                <Text fontSize="1.5rem">
+                  {`Subject: ${QuizSetData?.getQuizSetv2.subject}`}
+                </Text>
+              </Box>
+              {QuizSetData?.getQuizSetv2 ? (
+                <>
+                  {QuizSetData?.getQuizSetv2.quizzes.map((quiz) => {
+                    return (
+                      <>
+                        <Box mt="1.5rem">
+                          <Flex flexDirection="column">
+                            <Box>
+                              <Text
+                                fontWeight={500}
+                              >{`${quiz.itemNumber}. ${quiz.question}`}</Text>
                             </Box>
-                          </>
-                        );
-                      })}
-                  </Flex>
-                </Flex>
-              </>
-            );
-          })}
-        </>
-      ) : (
-        ""
-      )}
-      {isSubmitted && !isDoneSubmitting ? (
-        <Button
-          onClick={() => {
-            refetchScore();
-          }}
-        >
-          back
-        </Button>
-      ) : (
-        <Button
-          isLoading={isDoneSubmitting}
-          onClick={() => {
-            setIsDoneSubmitting(true);
-            items.map(async (item, index) => {
-              await submitAnswer(item);
-              if (item === items[index]) {
-                setIsDoneSubmitting(false);
-                setIsSubmitted(true);
-              }
-            });
-          }}
-        >
-          Submit Answer
-        </Button>
-      )}
+                            <Flex flexDirection="row">
+                              {quiz.multipleChoices
+                                // ERROR Cannot assign to read only property '0' of object '[object Array]'
+                                //Because the array is frozen in strict mode, you'll need to copy the array before sorting it: by adding a slice
+                                .slice()
+                                .sort((a, b) => {
+                                  var textA = a.letterItem.toUpperCase();
+                                  var textB = b.letterItem.toUpperCase();
+                                  return textA < textB
+                                    ? -1
+                                    : textA > textB
+                                    ? 1
+                                    : 0;
+                                })
+                                .map((choice) => {
+                                  return (
+                                    <>
+                                      <Box mr="1rem" mt=".5rem">
+                                        <Flex flexDirection="row">
+                                          <Checkbox
+                                            isChecked={isInItems(
+                                              choice.id,
+                                              quiz.id
+                                            )}
+                                            onChange={() => {
+                                              if (
+                                                isInItems(choice.id, quiz.id)
+                                              ) {
+                                                console.log("true");
+                                                const newItems = items.filter(
+                                                  (item) => {
+                                                    return (
+                                                      item.choiceId !==
+                                                        choice.id ||
+                                                      item.quizId !== quiz.id
+                                                    );
+                                                  }
+                                                );
+                                                console.log(newItems);
+                                                setItems(newItems);
+                                              } else {
+                                                const newItems = items.filter(
+                                                  (item) => {
+                                                    return (
+                                                      item.quizId !== quiz.id
+                                                    );
+                                                  }
+                                                );
+                                                setItems([
+                                                  ...newItems,
+                                                  {
+                                                    itemNumber: quiz.itemNumber,
+                                                    choiceId: choice.id,
+                                                    quizId: quiz.id,
+                                                    answer:
+                                                      choice.letterContent,
+                                                    quizSetId: quiz.quizSetId,
+                                                  },
+                                                ]);
+                                              }
+                                            }}
+                                          >
+                                            {`${choice.letterItem}.`}
+                                          </Checkbox>
+                                          <Text fontWeight={700} ml=".5rem">
+                                            {choice.letterContent}
+                                          </Text>
+                                        </Flex>
+                                      </Box>
+                                    </>
+                                  );
+                                })}
+                            </Flex>
+                          </Flex>
+                        </Box>
+                      </>
+                    );
+                  })}
+                </>
+              ) : (
+                ""
+              )}
+              {isSubmitted && !isDoneSubmitting ? (
+                <NextLink
+                  href="/answer-set/[id]"
+                  as={`/answer-set/${routerId}`}
+                >
+                  <Button
+                    position="absolute"
+                    m="auto"
+                    left="0"
+                    right="0"
+                    bottom="1rem"
+                  >
+                    Check Score
+                  </Button>
+                </NextLink>
+              ) : (
+                <Button
+                  isLoading={isDoneSubmitting}
+                  position="absolute"
+                  m="auto"
+                  left="0"
+                  right="0"
+                  bottom="1rem"
+                  onClick={() => {
+                    setIsDoneSubmitting(true);
+                    items.map(async (item, index) => {
+                      await submitAnswer(item);
+                      if (item === items[index]) {
+                        refetchScore();
+                        setIsDoneSubmitting(false);
+                        setIsSubmitted(true);
+                      }
+                    });
+                  }}
+                >
+                  Submit Answer
+                </Button>
+              )}
+            </Box>
+          </Wrapper>
+        </Layout>
+      </MainContainer>
     </>
   );
 };

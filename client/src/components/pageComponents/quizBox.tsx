@@ -29,11 +29,15 @@ const QuizBox: React.FC<QuizBoxProps> = ({ quizSet, added }) => {
           <Text>{quizSet.title}</Text>
           <Button
             isDisabled={added}
-            onClick={() => {
-              createAnswerSet({
+            onClick={async () => {
+              const data = await createAnswerSet({
                 variables: { quizSetId: quizSet.id },
-                refetchQueries: [{ query: GetStudentDocument }],
+                refetchQueries: [
+                  { query: GetStudentDocument },
+                  { query: GetAnswerSetDocument },
+                ],
               });
+              console.log(data);
             }}
           >
             {`${added ? "ADDED" : "ADD"}`}

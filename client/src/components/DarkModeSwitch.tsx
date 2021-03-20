@@ -8,6 +8,7 @@ export const DarkModeSwitch = () => {
   return (
     <Switch
       position="fixed"
+      zIndex={1000}
       top="1rem"
       right="1rem"
       color="green"

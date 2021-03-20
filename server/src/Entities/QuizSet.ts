@@ -46,9 +46,9 @@ export class QuizSet extends BaseEntity {
   @ManyToOne(() => Teacher, (creator) => creator.quizSet)
   creator: Teacher;
 
-  @Field(() => AnswerSet, { nullable: true })
+  @Field(() => [AnswerSet], { nullable: true })
   @OneToMany(() => AnswerSet, (answerSet) => answerSet.quizSet)
-  answerSet: AnswerSet;
+  answerSet: AnswerSet[];
 
   @Field(() => Int, { nullable: true })
   @Column({ nullable: true })

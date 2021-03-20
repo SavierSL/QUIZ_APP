@@ -74,6 +74,16 @@ export class QuizResolver {
     );
     return quizSet;
   }
+  @Query(() => [QuizSet])
+  async getTeachersQuizSet(@Ctx() { req }: MyContext) {
+    const getTeachersQuiz = await QuizSet.find({
+      relations: ["answerSet", "answerSet.answers"],
+      where: {
+        creatorId: req.session.teacherId,
+      },
+    });
+    return getTeachersQuiz;
+  }
 
   @Mutation(() => QuizSet)
   async createQuizSet(

@@ -17,6 +17,7 @@ import {
   useGetAnswerSetQuery,
   useGetAnswerSetScoreQuery,
   useGetStudentQuery,
+  useGetTeachersQuizSetQuery,
 } from "../../generated/graphql";
 import StudentQuizBox from "../../components/pageComponents/studentQuizBox";
 
@@ -24,9 +25,7 @@ export interface AdminHomeProps {}
 
 const StudentHome: React.FC<AdminHomeProps> = () => {
   const { data: studentData } = useGetStudentQuery();
-  const { data: AnswerSetData } = useGetAnswerSetQuery({
-    variables: { studentId: studentData?.getStudent?.student?.id },
-  });
+  const { data: AnswerSetData } = useGetAnswerSetQuery();
   console.log(studentData);
   console.log(AnswerSetData);
   const tableTitles = ["Quiz Name", "Quiz Items", "Quiz Subject", "Quiz Score"];

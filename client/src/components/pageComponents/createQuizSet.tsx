@@ -8,6 +8,7 @@ import {
   Quiz,
   QuizSet,
   useCreateQuizSetMutation,
+  useGetTeachersQuizSetQuery,
 } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
 
@@ -32,7 +33,7 @@ const CreateQuizSet: React.FC<CreateQuizProps> = () => {
   const handleChange1 = (event) => setValue1(event.target.value);
   const [value2, setValue2] = React.useState("");
   const handleChange2 = (event) => setValue2(event.target.value);
-
+  const { refetch: refetchTeachersData } = useGetTeachersQuizSetQuery();
   return (
     <>
       <Flex flexDirection="column">
@@ -60,6 +61,7 @@ const CreateQuizSet: React.FC<CreateQuizProps> = () => {
                   quizSetCode: data.data.createQuizSet.quizSetCode,
                 });
                 setIsSet(true);
+                refetchTeachersData();
               }}
             >
               {({ isSubmitting, initialValues }) => (
@@ -115,6 +117,9 @@ const CreateQuizSet: React.FC<CreateQuizProps> = () => {
           }}
         >
           Add more question
+        </Button>
+        <Button mt="1rem" color="green">
+          COMPLETE
         </Button>
       </Flex>
     </>
