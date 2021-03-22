@@ -2,21 +2,46 @@ import { Box, Text, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import {
+  Answer,
+  AnswerSet,
+  MultipleChoices,
+  Quiz,
+  QuizSet,
   useGetAnswerSetQuery,
   useGetAnswerSetScoreQuery,
   useGetAnswerSetv2Query,
 } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
 export interface AnswerSetMultipleChoiceProps {
-  id: number;
+  answerSetDatas: Pick<AnswerSet, "id" | "title" | "subject"> & {
+    answers?: ({
+      __typename?: "Answer";
+    } & Pick<
+      Answer,
+      "answerSetId" | "id" | "isCorrect" | "itemNumber" | "answer" | "isCorrect"
+    >)[];
+    quizSet?: {
+      __typename?: "QuizSet";
+    } & {
+      quizzes?: ({
+        __typename?: "Quiz";
+      } & Pick<Quiz, "itemNumber" | "question" | "answer"> & {
+          multipleChoices?: ({
+            __typename?: "MultipleChoices";
+          } & Pick<MultipleChoices, "letterContent" | "letterItem">)[];
+        })[];
+    };
+  };
+  answerSetId: number;
 }
 
 const AnswerSetMultipleChoice: React.FC<AnswerSetMultipleChoiceProps> = ({
-  id,
+  answerSetId,
+  answerSetDatas,
 }) => {
-  const { data: GetAnswerSetData } = useGetAnswerSetv2Query({
-    variables: { id: id },
-  });
+  // const { data: GetAnswerSetData } = useGetAnswerSetv2Query({
+  //   variables: { id: id, answerSetId: answerSetId },
+  // });
   // const { data: AnwerSetData } = useGetAnswerSetQuery();
   // const getAnswerSetSameAsQuizSet = AnwerSetData?.getAnswerSet.filter(
   //   (answerSet) => {
@@ -25,8 +50,10 @@ const AnswerSetMultipleChoice: React.FC<AnswerSetMultipleChoiceProps> = ({
   // );
   // console.log(getAnswerSetSameAsQuizSet);
   const { data: scoreData } = useGetAnswerSetScoreQuery({
-    variables: { id: GetAnswerSetData?.getAnswerSetv2.id },
+    variables: { id: answerSetId },
   });
+  console.log(scoreData);
+  console.log(answerSetDatas);
   //   const quizSets = [];
   //   const sortedChoice = GetAnswerSetData?.getAnswerSetv2.quizSet.quizzes.map(
   //     (quiz) => {
@@ -47,12 +74,10 @@ const AnswerSetMultipleChoice: React.FC<AnswerSetMultipleChoiceProps> = ({
       <Text
         fontWeight={500}
       >{`Total Score: ${scoreData?.getAnswerSetScore}`}</Text>
-      {GetAnswerSetData?.getAnswerSetv2.quizSet.quizzes.map((question) => {
-        const findAnswer = GetAnswerSetData.getAnswerSetv2.answers.find(
-          (answer) => {
-            return answer.itemNumber === question.itemNumber;
-          }
-        );
+      {answerSetDatas?.quizSet.quizzes.map((question) => {
+        const findAnswer = answerSetDatas?.answers.find((answer) => {
+          return answer.itemNumber === question.itemNumber;
+        });
         return (
           <>
             <Box mt="1rem">
@@ -74,7 +99,7 @@ const AnswerSetMultipleChoice: React.FC<AnswerSetMultipleChoiceProps> = ({
                           <Text
                             mr="1rem"
                             color={
-                              findAnswer.answer === choice.letterContent
+                              findAnswer?.answer === choice.letterContent
                                 ? "red"
                                 : ""
                             }

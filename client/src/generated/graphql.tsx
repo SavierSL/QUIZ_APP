@@ -48,6 +48,7 @@ export type QueryGetAnswerSetScoreArgs = {
 
 
 export type QueryGetAnswerSetv2Args = {
+  answerSetId: Scalars['Int'];
   id: Scalars['Int'];
 };
 
@@ -193,6 +194,7 @@ export type MutationAnswerArgs = {
   answer: Scalars['String'];
   quizId: Scalars['Int'];
   itemNumber: Scalars['Int'];
+  answerSetId: Scalars['Int'];
   quizSetId: Scalars['Int'];
 };
 
@@ -242,6 +244,7 @@ export type AnswerMutationVariables = Exact<{
   itemNumber: Scalars['Int'];
   quizId: Scalars['Int'];
   answer: Scalars['String'];
+  answerSetId: Scalars['Int'];
 }>;
 
 
@@ -344,6 +347,7 @@ export type GetAnswerSetScoreQuery = (
 
 export type GetAnswerSetv2QueryVariables = Exact<{
   id: Scalars['Int'];
+  answerSetId: Scalars['Int'];
 }>;
 
 
@@ -357,12 +361,13 @@ export type GetAnswerSetv2Query = (
       & Pick<Answer, 'studentId' | 'id' | 'itemNumber' | 'answerSetId' | 'question' | 'answer' | 'isCorrect'>
     )>>, quizSet?: Maybe<(
       { __typename?: 'QuizSet' }
+      & Pick<QuizSet, 'title' | 'subject'>
       & { quizzes?: Maybe<Array<(
         { __typename?: 'Quiz' }
-        & Pick<Quiz, 'itemNumber' | 'question' | 'answer'>
+        & Pick<Quiz, 'id' | 'quizSetId' | 'itemNumber' | 'question' | 'answer'>
         & { multipleChoices?: Maybe<Array<(
           { __typename?: 'MultipleChoices' }
-          & Pick<MultipleChoices, 'letterItem' | 'letterContent'>
+          & Pick<MultipleChoices, 'id' | 'letterItem' | 'letterContent'>
         )>> }
       )>> }
     )> }
@@ -465,12 +470,13 @@ export type MakeQuizMutation = (
 
 
 export const AnswerDocument = gql`
-    mutation answer($quizSetId: Int!, $itemNumber: Int!, $quizId: Int!, $answer: String!) {
+    mutation answer($quizSetId: Int!, $itemNumber: Int!, $quizId: Int!, $answer: String!, $answerSetId: Int!) {
   answer(
     quizSetId: $quizSetId
     itemNumber: $itemNumber
     quizId: $quizId
     answer: $answer
+    answerSetId: $answerSetId
   ) {
     itemNumber
     answerSetId
@@ -501,6 +507,7 @@ export type AnswerMutationFn = Apollo.MutationFunction<AnswerMutation, AnswerMut
  *      itemNumber: // value for 'itemNumber'
  *      quizId: // value for 'quizId'
  *      answer: // value for 'answer'
+ *      answerSetId: // value for 'answerSetId'
  *   },
  * });
  */
@@ -733,8 +740,8 @@ export type GetAnswerSetScoreQueryHookResult = ReturnType<typeof useGetAnswerSet
 export type GetAnswerSetScoreLazyQueryHookResult = ReturnType<typeof useGetAnswerSetScoreLazyQuery>;
 export type GetAnswerSetScoreQueryResult = Apollo.QueryResult<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>;
 export const GetAnswerSetv2Document = gql`
-    query getAnswerSetv2($id: Int!) {
-  getAnswerSetv2(id: $id) {
+    query getAnswerSetv2($id: Int!, $answerSetId: Int!) {
+  getAnswerSetv2(id: $id, answerSetId: $answerSetId) {
     title
     subject
     id
@@ -748,11 +755,16 @@ export const GetAnswerSetv2Document = gql`
       isCorrect
     }
     quizSet {
+      title
+      subject
       quizzes {
+        id
+        quizSetId
         itemNumber
         question
         answer
         multipleChoices {
+          id
           letterItem
           letterContent
         }
@@ -775,6 +787,7 @@ export const GetAnswerSetv2Document = gql`
  * const { data, loading, error } = useGetAnswerSetv2Query({
  *   variables: {
  *      id: // value for 'id'
+ *      answerSetId: // value for 'answerSetId'
  *   },
  * });
  */

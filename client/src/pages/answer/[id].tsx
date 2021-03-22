@@ -6,6 +6,7 @@ import {
   useAnswerMutation,
   useGetStudentQuery,
   useGetAnswerSetScoreQuery,
+  useGetAnswerSetv2Query,
 } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
 import { useApolloClient } from "@apollo/client";
@@ -22,8 +23,12 @@ type Item = {
   quizId: number;
   answer: string;
   quizSetId: number;
+  answerSetId: number;
 };
-
+interface AnswerSetData {
+  quizSetId: number;
+  answerSetId: number;
+}
 const Answer: React.FC<AnswerProps> = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDoneSubmitting, setIsDoneSubmitting] = useState(false);
@@ -32,14 +37,27 @@ const Answer: React.FC<AnswerProps> = () => {
 
   const [answer] = useAnswerMutation();
   const router = useRouter();
+
   const [items, setItems] = useState<Item[]>([]);
-  const routerId =
-    typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
+  const routerId = typeof router.query.id === "string" ? router.query.id : "";
+  const answerSetData: AnswerSetData = JSON.parse(routerId);
   const { data, refetch: refetchScore } = useGetAnswerSetScoreQuery({
-    variables: { id: routerId },
+    variables: { id: +answerSetData.answerSetId },
   });
-  const { data: QuizSetData } = useGetQuizSetv2Query({
-    variables: { id: routerId },
+  const { data: QuizSetData } = useGetAnswerSetv2Query({
+    variables: {
+      id: +answerSetData.quizSetId,
+      answerSetId: +answerSetData.answerSetId,
+    },
+  });
+  const {
+    data: GetAnswerSetData,
+    refetch: refetchAnswers,
+  } = useGetAnswerSetv2Query({
+    variables: {
+      id: +answerSetData.quizSetId,
+      answerSetId: +answerSetData.answerSetId,
+    },
   });
   const isInItems = (choiceId: number, quizId: number): boolean => {
     const boolean: Item[] = items.filter((item) => {
@@ -58,6 +76,7 @@ const Answer: React.FC<AnswerProps> = () => {
   const submitAnswer = async (item: Item) => {
     await answer({
       variables: {
+        answerSetId: +answerSetData.answerSetId,
         answer: item.answer,
         quizId: item.quizId,
         quizSetId: item.quizSetId,
@@ -73,15 +92,15 @@ const Answer: React.FC<AnswerProps> = () => {
             <Box minHeight="100vh" bg="blackAlpha.200" p="5rem">
               <Box mb="1rem">
                 <Text fontSize="1.5rem">
-                  {`Title: ${QuizSetData?.getQuizSetv2.title}`}
+                  {`Title: ${QuizSetData?.getAnswerSetv2.quizSet.title}`}
                 </Text>
                 <Text fontSize="1.5rem">
-                  {`Subject: ${QuizSetData?.getQuizSetv2.subject}`}
+                  {`Subject: ${QuizSetData?.getAnswerSetv2.quizSet.subject}`}
                 </Text>
               </Box>
-              {QuizSetData?.getQuizSetv2 ? (
+              {QuizSetData?.getAnswerSetv2 ? (
                 <>
-                  {QuizSetData?.getQuizSetv2.quizzes.map((quiz) => {
+                  {QuizSetData?.getAnswerSetv2.quizSet.quizzes.map((quiz) => {
                     return (
                       <>
                         <Box mt="1.5rem">
@@ -148,6 +167,7 @@ const Answer: React.FC<AnswerProps> = () => {
                                                     answer:
                                                       choice.letterContent,
                                                     quizSetId: quiz.quizSetId,
+                                                    answerSetId: +answerSetData?.answerSetId,
                                                   },
                                                 ]);
                                               }
@@ -176,7 +196,7 @@ const Answer: React.FC<AnswerProps> = () => {
               {isSubmitted && !isDoneSubmitting ? (
                 <NextLink
                   href="/answer-set/[id]"
-                  as={`/answer-set/${routerId}`}
+                  as={`/answer-set/{"quizSetId": "${answerSetData.quizSetId}", "answerSetId": "${answerSetData.answerSetId}"}`}
                 >
                   <Button
                     position="absolute"
@@ -202,6 +222,7 @@ const Answer: React.FC<AnswerProps> = () => {
                       await submitAnswer(item);
                       if (item === items[index]) {
                         refetchScore();
+                        refetchAnswers();
                         setIsDoneSubmitting(false);
                         setIsSubmitted(true);
                       }

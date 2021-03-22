@@ -11,17 +11,28 @@ import AnswerSetMultipleChoice from "../../components/pageComponents/answerSetMu
 import Layout from "../../components/layout";
 import Wrapper from "../../components/wrapper";
 import MainContainer from "../../components/MainContainer";
+import { route } from "next/dist/next-server/server/router";
 export interface AnswerSetProps {}
-
+interface AnswerSetData {
+  quizSetId: number;
+  answerSetId: number;
+}
 const AnswerSet: React.FC<AnswerSetProps> = () => {
   const router = useRouter();
-  const routerId =
-    typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
+  const routerId = typeof router.query.id === "string" ? router.query.id : "";
+  console.log(JSON.parse(routerId));
+  const answerSetData: AnswerSetData = JSON.parse(routerId);
+
   const { data: GetAnswerSetData } = useGetAnswerSetv2Query({
-    variables: { id: routerId },
+    variables: {
+      id: +answerSetData.quizSetId,
+      answerSetId: +answerSetData.answerSetId,
+    },
   });
+  console.log(typeof answerSetData.answerSetId);
+  console.log(GetAnswerSetData?.getAnswerSetv2);
   const { data: scoreData } = useGetAnswerSetScoreQuery({
-    variables: { id: routerId },
+    variables: { id: answerSetData.quizSetId },
   });
 
   return (
@@ -36,7 +47,14 @@ const AnswerSet: React.FC<AnswerSetProps> = () => {
                 <Text>{GetAnswerSetData?.getAnswerSetv2.subject}</Text>
                 <Text>{GetAnswerSetData?.getAnswerSetv2.title}</Text>
               </Box>
-              <Box>{<AnswerSetMultipleChoice id={routerId} />}</Box>
+              <Box>
+                {
+                  <AnswerSetMultipleChoice
+                    answerSetDatas={GetAnswerSetData?.getAnswerSetv2}
+                    answerSetId={GetAnswerSetData?.getAnswerSetv2.id}
+                  />
+                }
+              </Box>
             </Box>
           </Wrapper>
         </Layout>

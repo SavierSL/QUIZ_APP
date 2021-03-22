@@ -1,5 +1,5 @@
-query getAnswerSetv2($id: Int!) {
-  getAnswerSetv2(id: $id) {
+query getAnswerSetv2($id: Int!, $answerSetId: Int!) {
+  getAnswerSetv2(id: $id, answerSetId: $answerSetId) {
     title
     subject
     id
@@ -13,11 +13,16 @@ query getAnswerSetv2($id: Int!) {
       isCorrect
     }
     quizSet {
+      title
+      subject
       quizzes {
+        id
+        quizSetId
         itemNumber
         question
         answer
         multipleChoices {
+          id
           letterItem
           letterContent
         }

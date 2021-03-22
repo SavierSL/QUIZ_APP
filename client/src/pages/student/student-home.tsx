@@ -72,7 +72,7 @@ const StudentHome: React.FC<AdminHomeProps> = () => {
                     return (
                       <NextLink
                         href="/answer-set/[id]"
-                        as={`/answer-set/${quizSet.quizSetId}`}
+                        as={`/answer-set/${`{"quizSetId": "${quizSet.quizSetId}", "answerSetId": "${quizSet.id}"}`}`}
                       >
                         <Box
                           _hover={{ bg: "gray" }}

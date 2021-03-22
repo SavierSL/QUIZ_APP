@@ -30,13 +30,13 @@ const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quizSet }) => {
 
   const getAnswerSetSameAsQuizSet = AnwerSetData?.getAnswerSet.filter(
     (answerSet) => {
-      return answerSet.id === quizSet.id;
+      return answerSet.quizSetId === quizSet.quizSetId;
     }
   );
   const { data: AnswerSetScoreData } = useGetAnswerSetScoreQuery({
     variables: { id: getAnswerSetSameAsQuizSet[0]?.id },
   });
-  console.log(AnswerSetScoreData);
+  console.log(quizSet);
   return (
     <>
       <Flex>
@@ -65,7 +65,7 @@ const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quizSet }) => {
               <Button ml="1rem">
                 <NextLink
                   href="/answer/[id]"
-                  as={`/answer/${quizSet.quizSetId}`}
+                  as={`/answer/${`{"quizSetId": "${quizSet.quizSetId}", "answerSetId": "${getAnswerSetSameAsQuizSet[0]?.id}"}`}`}
                 >
                   Answer
                 </NextLink>

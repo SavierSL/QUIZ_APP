@@ -12,6 +12,7 @@ export class AnswerResolver extends BaseEntity {
   @Mutation(() => Answer)
   async answer(
     @Arg("quizSetId", () => Int) quizSetId: number,
+    @Arg("answerSetId", () => Int) answerSetId: number,
     @Arg("itemNumber", () => Int) itemNumber: number,
     @Arg("quizId", () => Int) quizId: number,
     @Arg("answer") answer: string,
@@ -39,7 +40,7 @@ export class AnswerResolver extends BaseEntity {
       itemNumber,
       question: question?.question,
       answer,
-      answerSetId: getAnswerSet?.quizSetId,
+      answerSetId: answerSetId,
     }).save();
     // let score: number;
     // if (typeof getAnswerSet?.score !== "undefined") {
@@ -113,10 +114,11 @@ export class AnswerResolver extends BaseEntity {
   @Query(() => AnswerSet)
   async getAnswerSetv2(
     @Arg("id", () => Int) id: number,
+    @Arg("answerSetId", () => Int) answerSetId: number,
     @Ctx() { req }: MyContext
   ) {
     const getAnswerSet = await AnswerSet.findOne(
-      { quizSetId: id, studentId: req.session.userId },
+      { quizSetId: id, id: answerSetId, studentId: req.session.userId },
       {
         relations: [
           "answers",

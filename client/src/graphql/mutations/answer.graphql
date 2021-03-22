@@ -3,12 +3,14 @@ mutation answer(
   $itemNumber: Int!
   $quizId: Int!
   $answer: String!
+  $answerSetId: Int!
 ) {
   answer(
     quizSetId: $quizSetId
     itemNumber: $itemNumber
     quizId: $quizId
     answer: $answer
+    answerSetId: $answerSetId
   ) {
     itemNumber
     answerSetId
