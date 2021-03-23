@@ -23,6 +23,7 @@ export type Query = {
   getAnswerSetTeacher: Array<AnswerSet>;
   getAnswerSetScore?: Maybe<Scalars['Int']>;
   getAnswerSetv2: AnswerSet;
+  me: Student;
   getStudent?: Maybe<StudentData>;
 };
 
@@ -452,6 +453,26 @@ export type GetTeachersQuizSetQuery = (
   )> }
 );
 
+export type LogInStudentMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type LogInStudentMutation = (
+  { __typename?: 'Mutation' }
+  & { logInStudent: (
+    { __typename?: 'ResponseField' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, user?: Maybe<(
+      { __typename?: 'Student' }
+      & Pick<Student, 'id' | 'email'>
+    )> }
+  ) }
+);
+
 export type MakeQuizMutationVariables = Exact<{
   question: Scalars['String'];
   itemNumber: Scalars['Int'];
@@ -465,6 +486,17 @@ export type MakeQuizMutation = (
   & { makeQuiz: (
     { __typename?: 'Quiz' }
     & Pick<Quiz, 'id' | 'answer' | 'itemNumber' | 'quizSetId' | 'question'>
+  ) }
+);
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename?: 'Student' }
+    & Pick<Student, 'id' | 'email'>
   ) }
 );
 
@@ -1000,6 +1032,47 @@ export function useGetTeachersQuizSetLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type GetTeachersQuizSetQueryHookResult = ReturnType<typeof useGetTeachersQuizSetQuery>;
 export type GetTeachersQuizSetLazyQueryHookResult = ReturnType<typeof useGetTeachersQuizSetLazyQuery>;
 export type GetTeachersQuizSetQueryResult = Apollo.QueryResult<GetTeachersQuizSetQuery, GetTeachersQuizSetQueryVariables>;
+export const LogInStudentDocument = gql`
+    mutation logInStudent($email: String!, $password: String!) {
+  logInStudent(email: $email, password: $password) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      email
+    }
+  }
+}
+    `;
+export type LogInStudentMutationFn = Apollo.MutationFunction<LogInStudentMutation, LogInStudentMutationVariables>;
+
+/**
+ * __useLogInStudentMutation__
+ *
+ * To run a mutation, you first call `useLogInStudentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogInStudentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logInStudentMutation, { data, loading, error }] = useLogInStudentMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLogInStudentMutation(baseOptions?: Apollo.MutationHookOptions<LogInStudentMutation, LogInStudentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogInStudentMutation, LogInStudentMutationVariables>(LogInStudentDocument, options);
+      }
+export type LogInStudentMutationHookResult = ReturnType<typeof useLogInStudentMutation>;
+export type LogInStudentMutationResult = Apollo.MutationResult<LogInStudentMutation>;
+export type LogInStudentMutationOptions = Apollo.BaseMutationOptions<LogInStudentMutation, LogInStudentMutationVariables>;
 export const MakeQuizDocument = gql`
     mutation makeQuiz($question: String!, $itemNumber: Int!, $answer: String!, $quizSetId: Int!) {
   makeQuiz(
@@ -1045,3 +1118,38 @@ export function useMakeQuizMutation(baseOptions?: Apollo.MutationHookOptions<Mak
 export type MakeQuizMutationHookResult = ReturnType<typeof useMakeQuizMutation>;
 export type MakeQuizMutationResult = Apollo.MutationResult<MakeQuizMutation>;
 export type MakeQuizMutationOptions = Apollo.BaseMutationOptions<MakeQuizMutation, MakeQuizMutationVariables>;
+export const MeDocument = gql`
+    query me {
+  me {
+    id
+    email
+  }
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+      }
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;

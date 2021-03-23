@@ -43,6 +43,15 @@ export class StudentData {
 
 @Resolver()
 export class UserResolver {
+  @Query(() => Student || Teacher)
+  async me(@Ctx() { req }: MyContext) {
+    const user = await Student.findOne({ id: req.session.userId });
+    if (user) {
+      return user;
+    } else {
+      return null;
+    }
+  }
   @Mutation(() => ResponseField) //
   async registerStudent(
     @Arg("email") email: string,

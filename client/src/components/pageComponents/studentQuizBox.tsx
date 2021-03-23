@@ -28,13 +28,18 @@ const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quizSet }) => {
 
   const { data: AnwerSetData } = useGetAnswerSetQuery();
 
-  const getAnswerSetSameAsQuizSet = AnwerSetData?.getAnswerSet.filter(
+  const getAnswerSetSameAsQuizSet = AnwerSetData?.getAnswerSet?.filter(
     (answerSet) => {
       return answerSet.quizSetId === quizSet.quizSetId;
     }
   );
   const { data: AnswerSetScoreData } = useGetAnswerSetScoreQuery({
-    variables: { id: getAnswerSetSameAsQuizSet[0]?.id },
+    variables: {
+      id:
+        getAnswerSetSameAsQuizSet?.length === 1
+          ? getAnswerSetSameAsQuizSet[0]?.id
+          : -1,
+    },
   });
   console.log(quizSet);
   return (
