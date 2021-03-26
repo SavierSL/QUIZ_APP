@@ -28,8 +28,16 @@ export class ResponseField {
   @Field(() => [FieldError], { nullable: true })
   errors?: FieldError[];
 
-  @Field(() => Student || Teacher, { nullable: true })
-  user?: Student | Teacher;
+  @Field(() => Student, { nullable: true })
+  user?: Student;
+}
+@ObjectType()
+export class ResponseFieldT {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => Teacher, { nullable: true })
+  user?: Teacher;
 }
 
 @ObjectType()
@@ -43,9 +51,18 @@ export class StudentData {
 
 @Resolver()
 export class UserResolver {
-  @Query(() => Student || Teacher)
+  @Query(() => Student || Teacher, { nullable: true })
   async me(@Ctx() { req }: MyContext) {
     const user = await Student.findOne({ id: req.session.userId });
+    if (user) {
+      return user;
+    } else {
+      return null;
+    }
+  }
+  @Query(() => Teacher, { nullable: true })
+  async meTeacher(@Ctx() { req }: MyContext) {
+    const user = await Teacher.findOne({ id: req.session.teacherId });
     if (user) {
       return user;
     } else {
@@ -90,12 +107,12 @@ export class UserResolver {
     };
   }
 
-  @Mutation(() => ResponseField) //
+  @Mutation(() => ResponseFieldT) //
   async registerTeacher(
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Ctx() { req }: MyContext
-  ): Promise<ResponseField> {
+  ): Promise<ResponseFieldT> {
     if (!email.includes("@")) {
       return {
         errors: [
@@ -181,12 +198,12 @@ export class UserResolver {
       user,
     };
   }
-  @Mutation(() => ResponseField) //
+  @Mutation(() => ResponseFieldT) //
   async logInTeacher(
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Ctx() { req }: MyContext
-  ): Promise<ResponseField> {
+  ): Promise<ResponseFieldT> {
     if (!email.includes("@")) {
       return {
         errors: [
@@ -250,5 +267,20 @@ export class UserResolver {
       student,
       answerSets: student.answerSets,
     };
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+    //if there is an error in req.session.destroy() it will return false
+    return new Promise((resolve) => {
+      req.session.destroy((err) => {
+        res.clearCookie("cookieID");
+        if (err) {
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      });
+    });
   }
 }

@@ -37,7 +37,7 @@ const StudentQuizBox: React.FC<StudentQuizBoxProps> = ({ quizSet }) => {
     variables: {
       id:
         getAnswerSetSameAsQuizSet?.length === 1
-          ? getAnswerSetSameAsQuizSet[0]?.id
+          ? +getAnswerSetSameAsQuizSet[0]?.id
           : -1,
     },
   });

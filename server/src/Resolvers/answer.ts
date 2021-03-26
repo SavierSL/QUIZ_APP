@@ -96,7 +96,7 @@ export class AnswerResolver extends BaseEntity {
   }
   @Query(() => Int, { nullable: true })
   async getAnswerSetScore(
-    @Arg("id", () => Int) id: number,
+    @Arg("id", () => Int, { nullable: true }) id: number,
     @Ctx() { req }: MyContext
   ) {
     const getAnswerSet = await AnswerSet.findOne(
@@ -111,7 +111,7 @@ export class AnswerResolver extends BaseEntity {
     return score;
   }
 
-  @Query(() => AnswerSet)
+  @Query(() => AnswerSet, { nullable: true })
   async getAnswerSetv2(
     @Arg("id", () => Int) id: number,
     @Arg("answerSetId", () => Int) answerSetId: number,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MainContainer from "../../components/MainContainer";
 import Layout from "../../components/layout";
 import Wrapper from "../../components/wrapper";
@@ -18,8 +18,10 @@ import {
   useGetAnswerSetScoreQuery,
   useGetStudentQuery,
   useGetTeachersQuizSetQuery,
+  useMeQuery,
 } from "../../generated/graphql";
 import StudentQuizBox from "../../components/pageComponents/studentQuizBox";
+import Router from "next/router";
 
 export interface AdminHomeProps {}
 
@@ -29,6 +31,12 @@ const StudentHome: React.FC<AdminHomeProps> = () => {
   console.log(studentData);
   console.log(AnswerSetData);
   const tableTitles = ["Quiz Name", "Quiz Items", "Quiz Subject", "Quiz Score"];
+  const { data: Medata, loading } = useMeQuery();
+  useEffect(() => {
+    if (Medata?.me === null && !loading) {
+      Router.push("/student");
+    }
+  }, []);
 
   const isBorder = (title: string) => {
     if (title === "Quiz Name") {

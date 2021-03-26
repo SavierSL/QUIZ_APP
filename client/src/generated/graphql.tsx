@@ -22,8 +22,9 @@ export type Query = {
   getAnswerSet?: Maybe<Array<AnswerSet>>;
   getAnswerSetTeacher: Array<AnswerSet>;
   getAnswerSetScore?: Maybe<Scalars['Int']>;
-  getAnswerSetv2: AnswerSet;
-  me: Student;
+  getAnswerSetv2?: Maybe<AnswerSet>;
+  me?: Maybe<Student>;
+  meTeacher?: Maybe<Teacher>;
   getStudent?: Maybe<StudentData>;
 };
 
@@ -44,7 +45,7 @@ export type QueryGetAnswerSetTeacherArgs = {
 
 
 export type QueryGetAnswerSetScoreArgs = {
-  id: Scalars['Int'];
+  id?: Maybe<Scalars['Int']>;
 };
 
 
@@ -159,9 +160,10 @@ export type Mutation = {
   answer: Answer;
   createAnswerSet?: Maybe<AnswerSet>;
   registerStudent: ResponseField;
-  registerTeacher: ResponseField;
+  registerTeacher: ResponseFieldT;
   logInStudent: ResponseField;
-  logInTeacher: ResponseField;
+  logInTeacher: ResponseFieldT;
+  logout: Scalars['Boolean'];
 };
 
 
@@ -238,6 +240,12 @@ export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
   message: Scalars['String'];
+};
+
+export type ResponseFieldT = {
+  __typename?: 'ResponseFieldT';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<Teacher>;
 };
 
 export type AnswerMutationVariables = Exact<{
@@ -337,7 +345,7 @@ export type GetAnswerSetQuery = (
 );
 
 export type GetAnswerSetScoreQueryVariables = Exact<{
-  id: Scalars['Int'];
+  id?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -354,7 +362,7 @@ export type GetAnswerSetv2QueryVariables = Exact<{
 
 export type GetAnswerSetv2Query = (
   { __typename?: 'Query' }
-  & { getAnswerSetv2: (
+  & { getAnswerSetv2?: Maybe<(
     { __typename?: 'AnswerSet' }
     & Pick<AnswerSet, 'title' | 'subject' | 'id'>
     & { answers?: Maybe<Array<(
@@ -372,7 +380,7 @@ export type GetAnswerSetv2Query = (
         )>> }
       )>> }
     )> }
-  ) }
+  )> }
 );
 
 export type GetQuizSetMutationVariables = Exact<{
@@ -473,6 +481,34 @@ export type LogInStudentMutation = (
   ) }
 );
 
+export type LogInTeacherMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type LogInTeacherMutation = (
+  { __typename?: 'Mutation' }
+  & { logInTeacher: (
+    { __typename?: 'ResponseFieldT' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, user?: Maybe<(
+      { __typename?: 'Teacher' }
+      & Pick<Teacher, 'id' | 'email'>
+    )> }
+  ) }
+);
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
+);
+
 export type MakeQuizMutationVariables = Exact<{
   question: Scalars['String'];
   itemNumber: Scalars['Int'];
@@ -494,9 +530,60 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = (
   { __typename?: 'Query' }
-  & { me: (
+  & { me?: Maybe<(
     { __typename?: 'Student' }
     & Pick<Student, 'id' | 'email'>
+  )> }
+);
+
+export type MeTeacherQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeTeacherQuery = (
+  { __typename?: 'Query' }
+  & { meTeacher?: Maybe<(
+    { __typename?: 'Teacher' }
+    & Pick<Teacher, 'id' | 'email'>
+  )> }
+);
+
+export type RegisterStudentMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type RegisterStudentMutation = (
+  { __typename?: 'Mutation' }
+  & { registerStudent: (
+    { __typename?: 'ResponseField' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, user?: Maybe<(
+      { __typename?: 'Student' }
+      & Pick<Student, 'id' | 'email'>
+    )> }
+  ) }
+);
+
+export type RegisterTeacherMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type RegisterTeacherMutation = (
+  { __typename?: 'Mutation' }
+  & { registerTeacher: (
+    { __typename?: 'ResponseFieldT' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, user?: Maybe<(
+      { __typename?: 'Teacher' }
+      & Pick<Teacher, 'id' | 'email'>
+    )> }
   ) }
 );
 
@@ -739,7 +826,7 @@ export type GetAnswerSetQueryHookResult = ReturnType<typeof useGetAnswerSetQuery
 export type GetAnswerSetLazyQueryHookResult = ReturnType<typeof useGetAnswerSetLazyQuery>;
 export type GetAnswerSetQueryResult = Apollo.QueryResult<GetAnswerSetQuery, GetAnswerSetQueryVariables>;
 export const GetAnswerSetScoreDocument = gql`
-    query getAnswerSetScore($id: Int!) {
+    query getAnswerSetScore($id: Int) {
   getAnswerSetScore(id: $id)
 }
     `;
@@ -760,7 +847,7 @@ export const GetAnswerSetScoreDocument = gql`
  *   },
  * });
  */
-export function useGetAnswerSetScoreQuery(baseOptions: Apollo.QueryHookOptions<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>) {
+export function useGetAnswerSetScoreQuery(baseOptions?: Apollo.QueryHookOptions<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAnswerSetScoreQuery, GetAnswerSetScoreQueryVariables>(GetAnswerSetScoreDocument, options);
       }
@@ -1073,6 +1160,77 @@ export function useLogInStudentMutation(baseOptions?: Apollo.MutationHookOptions
 export type LogInStudentMutationHookResult = ReturnType<typeof useLogInStudentMutation>;
 export type LogInStudentMutationResult = Apollo.MutationResult<LogInStudentMutation>;
 export type LogInStudentMutationOptions = Apollo.BaseMutationOptions<LogInStudentMutation, LogInStudentMutationVariables>;
+export const LogInTeacherDocument = gql`
+    mutation logInTeacher($email: String!, $password: String!) {
+  logInTeacher(email: $email, password: $password) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      email
+    }
+  }
+}
+    `;
+export type LogInTeacherMutationFn = Apollo.MutationFunction<LogInTeacherMutation, LogInTeacherMutationVariables>;
+
+/**
+ * __useLogInTeacherMutation__
+ *
+ * To run a mutation, you first call `useLogInTeacherMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogInTeacherMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logInTeacherMutation, { data, loading, error }] = useLogInTeacherMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLogInTeacherMutation(baseOptions?: Apollo.MutationHookOptions<LogInTeacherMutation, LogInTeacherMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogInTeacherMutation, LogInTeacherMutationVariables>(LogInTeacherDocument, options);
+      }
+export type LogInTeacherMutationHookResult = ReturnType<typeof useLogInTeacherMutation>;
+export type LogInTeacherMutationResult = Apollo.MutationResult<LogInTeacherMutation>;
+export type LogInTeacherMutationOptions = Apollo.BaseMutationOptions<LogInTeacherMutation, LogInTeacherMutationVariables>;
+export const LogoutDocument = gql`
+    mutation logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const MakeQuizDocument = gql`
     mutation makeQuiz($question: String!, $itemNumber: Int!, $answer: String!, $quizSetId: Int!) {
   makeQuiz(
@@ -1153,3 +1311,120 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const MeTeacherDocument = gql`
+    query meTeacher {
+  meTeacher {
+    id
+    email
+  }
+}
+    `;
+
+/**
+ * __useMeTeacherQuery__
+ *
+ * To run a query within a React component, call `useMeTeacherQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeTeacherQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeTeacherQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeTeacherQuery(baseOptions?: Apollo.QueryHookOptions<MeTeacherQuery, MeTeacherQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeTeacherQuery, MeTeacherQueryVariables>(MeTeacherDocument, options);
+      }
+export function useMeTeacherLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeTeacherQuery, MeTeacherQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeTeacherQuery, MeTeacherQueryVariables>(MeTeacherDocument, options);
+        }
+export type MeTeacherQueryHookResult = ReturnType<typeof useMeTeacherQuery>;
+export type MeTeacherLazyQueryHookResult = ReturnType<typeof useMeTeacherLazyQuery>;
+export type MeTeacherQueryResult = Apollo.QueryResult<MeTeacherQuery, MeTeacherQueryVariables>;
+export const RegisterStudentDocument = gql`
+    mutation registerStudent($email: String!, $password: String!) {
+  registerStudent(email: $email, password: $password) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      email
+    }
+  }
+}
+    `;
+export type RegisterStudentMutationFn = Apollo.MutationFunction<RegisterStudentMutation, RegisterStudentMutationVariables>;
+
+/**
+ * __useRegisterStudentMutation__
+ *
+ * To run a mutation, you first call `useRegisterStudentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterStudentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerStudentMutation, { data, loading, error }] = useRegisterStudentMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useRegisterStudentMutation(baseOptions?: Apollo.MutationHookOptions<RegisterStudentMutation, RegisterStudentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterStudentMutation, RegisterStudentMutationVariables>(RegisterStudentDocument, options);
+      }
+export type RegisterStudentMutationHookResult = ReturnType<typeof useRegisterStudentMutation>;
+export type RegisterStudentMutationResult = Apollo.MutationResult<RegisterStudentMutation>;
+export type RegisterStudentMutationOptions = Apollo.BaseMutationOptions<RegisterStudentMutation, RegisterStudentMutationVariables>;
+export const RegisterTeacherDocument = gql`
+    mutation registerTeacher($email: String!, $password: String!) {
+  registerTeacher(email: $email, password: $password) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      email
+    }
+  }
+}
+    `;
+export type RegisterTeacherMutationFn = Apollo.MutationFunction<RegisterTeacherMutation, RegisterTeacherMutationVariables>;
+
+/**
+ * __useRegisterTeacherMutation__
+ *
+ * To run a mutation, you first call `useRegisterTeacherMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterTeacherMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerTeacherMutation, { data, loading, error }] = useRegisterTeacherMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useRegisterTeacherMutation(baseOptions?: Apollo.MutationHookOptions<RegisterTeacherMutation, RegisterTeacherMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterTeacherMutation, RegisterTeacherMutationVariables>(RegisterTeacherDocument, options);
+      }
+export type RegisterTeacherMutationHookResult = ReturnType<typeof useRegisterTeacherMutation>;
+export type RegisterTeacherMutationResult = Apollo.MutationResult<RegisterTeacherMutation>;
+export type RegisterTeacherMutationOptions = Apollo.BaseMutationOptions<RegisterTeacherMutation, RegisterTeacherMutationVariables>;

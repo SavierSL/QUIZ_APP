@@ -1,0 +1,6 @@
+query meTeacher {
+  meTeacher {
+    id
+    email
+  }
+}

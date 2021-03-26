@@ -32,7 +32,7 @@ const AnswerSet: React.FC<AnswerSetProps> = () => {
   console.log(typeof answerSetData.answerSetId);
   console.log(GetAnswerSetData?.getAnswerSetv2);
   const { data: scoreData } = useGetAnswerSetScoreQuery({
-    variables: { id: answerSetData.quizSetId },
+    variables: { id: +answerSetData.quizSetId },
   });
 
   return (

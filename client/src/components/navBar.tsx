@@ -1,11 +1,19 @@
+import { useApolloClient } from "@apollo/client";
 import { Flex, Button, Box, Stack, useColorMode } from "@chakra-ui/react";
 import React from "react";
+import { useRouter } from "next/router";
+import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import Wrapper from "./wrapper";
+import { withApollo } from "../utils/withApollo";
 
 export interface NavBarProps {}
 
 const NavBar: React.FC<NavBarProps> = () => {
+  const [logout] = useLogoutMutation();
+  const router = useRouter();
+  const apolloClient = useApolloClient();
   const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <>
       <Flex
@@ -29,6 +37,16 @@ const NavBar: React.FC<NavBarProps> = () => {
             <Button bg="none">HOME</Button>
             <Button bg="none">PROFILE</Button>
             <Button bg="none">QUIZZES</Button>
+            <Button
+              bg="none"
+              onClick={async () => {
+                await logout();
+                router.push("/");
+                apolloClient.resetStore();
+              }}
+            >
+              Log out
+            </Button>
           </Stack>
         </Flex>
       </Box>
@@ -36,4 +54,4 @@ const NavBar: React.FC<NavBarProps> = () => {
   );
 };
 
-export default NavBar;
+export default withApollo({ ssr: false })(NavBar);

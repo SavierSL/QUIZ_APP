@@ -20,6 +20,7 @@ export interface QuizBoxProps {
     >)[];
   };
 }
+
 const QuizBox: React.FC<QuizBoxProps> = ({ quizSet, added }) => {
   const [createAnswerSet] = useCreateAnswerSetMutation();
   return (

@@ -52,8 +52,8 @@ const Index: React.FC<IndexProps> = () => {
                   <Text fontSize="1.1rem">
                     <span style={{ fontWeight: 700 }}>create,</span>
                     <span style={{ fontWeight: 700 }}> send,</span> and
-                    <span style={{ fontWeight: 700 }}> answer</span> some
-                    quizzes
+                    <span style={{ fontWeight: 700 }}> answer </span>
+                    quizzes for students
                   </Text>
                 </Box>
               </Wrapper>

@@ -1,0 +1,12 @@
+mutation logInTeacher($email: String!, $password: String!) {
+  logInTeacher(email: $email, password: $password) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      email
+    }
+  }
+}

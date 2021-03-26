@@ -8,39 +8,34 @@ import {
   useColorMode,
   Stack,
 } from "@chakra-ui/react";
-import MidBox from "../components/chakraCustom/MidBox";
-import Layout from "../components/layout";
-import MainContainer from "../components/MainContainer";
-import { fadeInMotion } from "../components/animation";
-import { MotionBox } from "../components/motionElements";
-import InputField from "../components/inputFIeld";
 import { Form, Formik } from "formik";
-import Wrapper from "../components/wrapper";
+import MainContainer from "../../components/MainContainer";
+import Wrapper from "../../components/wrapper";
+import InputField from "../../components/inputFIeld";
+import { MotionBox } from "../../components/motionElements";
+import MidBox from "../../components/chakraCustom/MidBox";
+import { fadeInMotion } from "../../components/animation";
 import {
-  MeDocument,
-  MeQuery,
   MeTeacherDocument,
   MeTeacherQuery,
-  useLogInTeacherMutation,
   useMeTeacherQuery,
-} from "../generated/graphql";
-import { withApollo } from "../utils/withApollo";
-import { toErrorMap } from "../utils/toErrors";
-import { useRouter } from "next/dist/client/router";
+  useRegisterTeacherMutation,
+} from "../../generated/graphql";
+import { useRouter } from "next/router";
+import { withApollo } from "../../utils/withApollo";
+export interface RegisterTeacherProps {}
 
-export interface TeacherProps {}
-
-const Teacher: React.FC<TeacherProps> = () => {
-  const router = useRouter(); //NextJS property
-  const [logInTeacher] = useLogInTeacherMutation();
-  const { data: MeData } = useMeTeacherQuery();
-  if (MeData?.meTeacher) {
+const RegisterTeacher: React.FC<RegisterTeacherProps> = () => {
+  const [registerTeacher] = useRegisterTeacherMutation();
+  const router = useRouter();
+  const { data: MeData, loading } = useMeTeacherQuery();
+  if (MeData?.meTeacher && !loading) {
     router.push("/teacher/teacher-home");
   }
   return (
     <>
       <MainContainer minHeight="100vh">
-        <Layout withNav={false}>
+        <Wrapper variant="large">
           <MidBox>
             <MotionBox
               variants={fadeInMotion}
@@ -50,47 +45,40 @@ const Teacher: React.FC<TeacherProps> = () => {
               mr="auto"
             >
               <Box textAlign="center" pt="5rem">
-                <Text fontSize="4.5rem">Teacher Login</Text>
+                <Text fontSize="4.5rem">Sign up for Teachers</Text>
               </Box>
               <Formik
                 initialValues={{ email: "", password: "" }}
-                onSubmit={async ({ email, password }, { setErrors }) => {
-                  const data = await logInTeacher({
+                onSubmit={async ({ email, password }) => {
+                  const data = await registerTeacher({
                     variables: { email, password },
                     update: (cache, { data }) => {
                       cache.writeQuery<MeTeacherQuery>({
                         query: MeTeacherDocument,
                         data: {
                           __typename: "Query",
-                          meTeacher: data.logInTeacher.user,
+                          meTeacher: data.registerTeacher.user,
                         },
                       });
                     },
                   });
-                  if (data.data?.logInTeacher.errors) {
-                    setErrors(toErrorMap(data.data?.logInTeacher.errors));
-                  }
-                  const newData = toErrorMap(data.data?.logInTeacher.errors);
-                  console.log(newData);
                 }}
               >
-                {() => (
+                {({ isSubmitting }) => (
                   <Form>
                     <Wrapper variant="small">
                       <InputField
                         name="email"
-                        label="Email"
-                        type="text"
                         placeholder="email"
+                        type="text"
                       />
                       <InputField
                         name="password"
-                        label="Password"
-                        type="password"
                         placeholder="password"
+                        type="password"
                       />
                       <Button mt="1rem" width="100%" type="submit">
-                        Log In
+                        Register
                       </Button>
                     </Wrapper>
                   </Form>
@@ -98,10 +86,10 @@ const Teacher: React.FC<TeacherProps> = () => {
               </Formik>
             </MotionBox>
           </MidBox>
-        </Layout>
+        </Wrapper>
       </MainContainer>
     </>
   );
 };
 
-export default withApollo({ ssr: false })(Teacher);
+export default withApollo({ ssr: false })(RegisterTeacher);

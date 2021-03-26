@@ -21,6 +21,7 @@ const QuizSetBox: React.FC<QuizSetBoxProps> = ({ quizSet }) => {
   const limitText = (string: string) => {
     return string.slice(0, 10);
   };
+  console.log(quizSet);
   return (
     <>
       <Flex>
