@@ -12,5 +12,16 @@ mutation getQuizSet($quizSetCode: String!) {
       question
       creatorId
     }
+    answerSet {
+      id
+      studentId
+      title
+      subject
+      answers {
+        itemNumber
+        isCorrect
+        answer
+      }
+    }
   }
 }

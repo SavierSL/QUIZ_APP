@@ -396,6 +396,13 @@ export type GetQuizSetMutation = (
     & { quizzes?: Maybe<Array<(
       { __typename?: 'Quiz' }
       & Pick<Quiz, 'id' | 'quizCode' | 'itemNumber' | 'question' | 'creatorId'>
+    )>>, answerSet?: Maybe<Array<(
+      { __typename?: 'AnswerSet' }
+      & Pick<AnswerSet, 'id' | 'studentId' | 'title' | 'subject'>
+      & { answers?: Maybe<Array<(
+        { __typename?: 'Answer' }
+        & Pick<Answer, 'itemNumber' | 'isCorrect' | 'answer'>
+      )>> }
     )>> }
   )> }
 );
@@ -935,6 +942,17 @@ export const GetQuizSetDocument = gql`
       itemNumber
       question
       creatorId
+    }
+    answerSet {
+      id
+      studentId
+      title
+      subject
+      answers {
+        itemNumber
+        isCorrect
+        answer
+      }
     }
   }
 }

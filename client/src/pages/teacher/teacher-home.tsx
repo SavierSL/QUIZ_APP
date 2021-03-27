@@ -14,7 +14,7 @@ import Wrapper from "../../components/wrapper";
 import { useGetTeachersQuizSetQuery } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
 import QuizSetBox from "../../components/pageComponents/quizSetbBox";
-
+import NextLink from "next/link";
 export interface TeacherHomeProps {}
 
 const TeacherHome: React.FC<TeacherHomeProps> = () => {
@@ -66,7 +66,24 @@ const TeacherHome: React.FC<TeacherHomeProps> = () => {
             </Flex>
 
             {TeachersQuizSets?.getTeachersQuizSet.map((quizSet) => {
-              return <QuizSetBox quizSet={quizSet} />;
+              return (
+                <>
+                  <NextLink
+                    href="/quiz-set/[id]"
+                    as={`/quiz-set/${quizSet.quizSetCode}`}
+                  >
+                    <Box
+                      _hover={{ bg: "gray" }}
+                      cursor="pointer"
+                      rounded="md"
+                      mt=".5rem"
+                      style={{ transition: "all .5s" }}
+                    >
+                      <QuizSetBox quizSet={quizSet} />
+                    </Box>
+                  </NextLink>
+                </>
+              );
             })}
           </Wrapper>
           <Collapse in={isOpen} animateOpacity>
