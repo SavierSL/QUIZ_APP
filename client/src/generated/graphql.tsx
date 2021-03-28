@@ -26,6 +26,7 @@ export type Query = {
   me?: Maybe<Student>;
   meTeacher?: Maybe<Teacher>;
   getStudent?: Maybe<StudentData>;
+  getStudentv2: Student;
 };
 
 
@@ -52,6 +53,11 @@ export type QueryGetAnswerSetScoreArgs = {
 export type QueryGetAnswerSetv2Args = {
   answerSetId: Scalars['Int'];
   id: Scalars['Int'];
+};
+
+
+export type QueryGetStudentv2Args = {
+  studentId: Scalars['Int'];
 };
 
 export type Quiz = {
@@ -395,7 +401,7 @@ export type GetQuizSetMutation = (
     & Pick<QuizSet, 'id' | 'quizSetCode' | 'creatorId' | 'title' | 'subject'>
     & { quizzes?: Maybe<Array<(
       { __typename?: 'Quiz' }
-      & Pick<Quiz, 'id' | 'quizCode' | 'itemNumber' | 'question' | 'creatorId'>
+      & Pick<Quiz, 'answer' | 'id' | 'quizCode' | 'itemNumber' | 'question' | 'creatorId'>
     )>>, answerSet?: Maybe<Array<(
       { __typename?: 'AnswerSet' }
       & Pick<AnswerSet, 'id' | 'studentId' | 'title' | 'subject'>
@@ -447,6 +453,19 @@ export type GetStudentQuery = (
       )>> }
     )> }
   )> }
+);
+
+export type GetStudentv2QueryVariables = Exact<{
+  studentId: Scalars['Int'];
+}>;
+
+
+export type GetStudentv2Query = (
+  { __typename?: 'Query' }
+  & { getStudentv2: (
+    { __typename?: 'Student' }
+    & Pick<Student, 'email'>
+  ) }
 );
 
 export type GetTeachersQuizSetQueryVariables = Exact<{ [key: string]: never; }>;
@@ -937,6 +956,7 @@ export const GetQuizSetDocument = gql`
     title
     subject
     quizzes {
+      answer
       id
       quizCode
       itemNumber
@@ -1086,6 +1106,41 @@ export function useGetStudentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetStudentQueryHookResult = ReturnType<typeof useGetStudentQuery>;
 export type GetStudentLazyQueryHookResult = ReturnType<typeof useGetStudentLazyQuery>;
 export type GetStudentQueryResult = Apollo.QueryResult<GetStudentQuery, GetStudentQueryVariables>;
+export const GetStudentv2Document = gql`
+    query getStudentv2($studentId: Int!) {
+  getStudentv2(studentId: $studentId) {
+    email
+  }
+}
+    `;
+
+/**
+ * __useGetStudentv2Query__
+ *
+ * To run a query within a React component, call `useGetStudentv2Query` and pass it any options that fit your needs.
+ * When your component renders, `useGetStudentv2Query` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetStudentv2Query({
+ *   variables: {
+ *      studentId: // value for 'studentId'
+ *   },
+ * });
+ */
+export function useGetStudentv2Query(baseOptions: Apollo.QueryHookOptions<GetStudentv2Query, GetStudentv2QueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetStudentv2Query, GetStudentv2QueryVariables>(GetStudentv2Document, options);
+      }
+export function useGetStudentv2LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetStudentv2Query, GetStudentv2QueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetStudentv2Query, GetStudentv2QueryVariables>(GetStudentv2Document, options);
+        }
+export type GetStudentv2QueryHookResult = ReturnType<typeof useGetStudentv2Query>;
+export type GetStudentv2LazyQueryHookResult = ReturnType<typeof useGetStudentv2LazyQuery>;
+export type GetStudentv2QueryResult = Apollo.QueryResult<GetStudentv2Query, GetStudentv2QueryVariables>;
 export const GetTeachersQuizSetDocument = gql`
     query getTeachersQuizSet {
   getTeachersQuizSet {

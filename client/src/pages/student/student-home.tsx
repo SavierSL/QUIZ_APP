@@ -16,23 +16,30 @@ import { withApollo } from "../../utils/withApollo";
 import {
   useGetAnswerSetQuery,
   useGetAnswerSetScoreQuery,
+  useGetAnswerSetv2Query,
   useGetStudentQuery,
   useGetTeachersQuizSetQuery,
   useMeQuery,
 } from "../../generated/graphql";
 import StudentQuizBox from "../../components/pageComponents/studentQuizBox";
 import Router from "next/router";
+import { useApolloClient } from "@apollo/client";
 
 export interface AdminHomeProps {}
 
 const StudentHome: React.FC<AdminHomeProps> = () => {
+  const apolloClient = useApolloClient();
   const { data: studentData } = useGetStudentQuery();
   const { data: AnswerSetData } = useGetAnswerSetQuery();
   console.log(studentData);
   console.log(AnswerSetData);
   const tableTitles = ["Quiz Name", "Quiz Items", "Quiz Subject", "Quiz Score"];
   const { data: Medata, loading } = useMeQuery();
+
   useEffect(() => {
+    apolloClient.cache.evict({
+      fieldName: "getAnswerSetv2",
+    });
     if (Medata?.me === null && !loading) {
       Router.push("/student");
     }

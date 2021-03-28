@@ -3,6 +3,7 @@ import {
   Arg,
   Ctx,
   Field,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -267,6 +268,11 @@ export class UserResolver {
       student,
       answerSets: student.answerSets,
     };
+  }
+  @Query(() => Student)
+  async getStudentv2(@Arg("studentId", () => Int) studentId: number) {
+    const student = await Student.findOne({ id: studentId });
+    return student;
   }
 
   @Mutation(() => Boolean)

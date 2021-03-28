@@ -6,6 +6,7 @@ mutation getQuizSet($quizSetCode: String!) {
     title
     subject
     quizzes {
+      answer
       id
       quizCode
       itemNumber

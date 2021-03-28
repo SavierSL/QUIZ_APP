@@ -1,0 +1,5 @@
+query getStudentv2($studentId: Int!) {
+  getStudentv2(studentId: $studentId) {
+    email
+  }
+}

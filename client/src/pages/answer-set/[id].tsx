@@ -37,28 +37,31 @@ const AnswerSet: React.FC<AnswerSetProps> = () => {
 
   return (
     <>
-      {" "}
-      <MainContainer minHeight="100vh">
-        <Layout withNav={true}>
-          <Wrapper variant="large">
-            <Box minHeight="100vh" bg="blackAlpha.200" p="5rem">
-              ANSWER SET
-              <Box>
-                <Text>{GetAnswerSetData?.getAnswerSetv2.subject}</Text>
-                <Text>{GetAnswerSetData?.getAnswerSetv2.title}</Text>
+      {GetAnswerSetData?.getAnswerSetv2 ? (
+        <MainContainer minHeight="100vh">
+          <Layout withNav={true}>
+            <Wrapper variant="large">
+              <Box minHeight="100vh" bg="blackAlpha.200" p="5rem">
+                ANSWER SET
+                <Box>
+                  <Text>{GetAnswerSetData?.getAnswerSetv2.subject}</Text>
+                  <Text>{GetAnswerSetData?.getAnswerSetv2.title}</Text>
+                </Box>
+                <Box>
+                  {
+                    <AnswerSetMultipleChoice
+                      answerSetDatas={GetAnswerSetData?.getAnswerSetv2}
+                      answerSetId={GetAnswerSetData?.getAnswerSetv2.id}
+                    />
+                  }
+                </Box>
               </Box>
-              <Box>
-                {
-                  <AnswerSetMultipleChoice
-                    answerSetDatas={GetAnswerSetData?.getAnswerSetv2}
-                    answerSetId={GetAnswerSetData?.getAnswerSetv2.id}
-                  />
-                }
-              </Box>
-            </Box>
-          </Wrapper>
-        </Layout>
-      </MainContainer>
+            </Wrapper>
+          </Layout>
+        </MainContainer>
+      ) : (
+        ""
+      )}
     </>
   );
 };
