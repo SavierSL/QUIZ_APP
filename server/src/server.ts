@@ -36,7 +36,7 @@ const main = async () => {
     type: "postgres",
     database: "quiz",
     username: "postgres",
-    password: "xxkaa548",
+    password: "secret",
     logging: true,
     synchronize: true,
     entities: [
